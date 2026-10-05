@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: vf_admin
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run scripts/setup_local.py first}
+      POSTGRES_DB: postgres
+      PRODUCT_DB_PASSWORD: ${PRODUCT_DB_PASSWORD:?Run scripts/setup_local.py first}
+      COMPANY_DB_PASSWORD: ${COMPANY_DB_PASSWORD:?Run scripts/setup_local.py first}
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - forge_postgres:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vf_admin -d postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+volumes:
+  forge_postgres:

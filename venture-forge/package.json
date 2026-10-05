@@ -1,0 +1,22 @@
+{
+  "name": "venture-forge",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @venture-forge/web",
+    "build": "npm run build --workspace @venture-forge/web",
+    "typecheck": "npm run typecheck --workspace @venture-forge/web",
+    "test:e2e": "playwright test",
+    "contracts": "openapi-typescript docs/openapi.json -o apps/web/lib/contracts.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "openapi-typescript": "7.13.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

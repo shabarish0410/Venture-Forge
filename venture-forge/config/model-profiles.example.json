@@ -1,0 +1,67 @@
+[
+  {
+    "name": "cloud-reasoning-openai",
+    "provider": "openai",
+    "model_id": "replace-with-your-compatible-model",
+    "reasoning": "high",
+    "context_tokens": 128000,
+    "max_output_tokens": 4096,
+    "structured_outputs": true,
+    "tool_calling": true,
+    "input_inr_per_million": 0,
+    "output_inr_per_million": 0,
+    "enabled": false
+  },
+  {
+    "name": "cloud-reasoning-anthropic",
+    "provider": "anthropic",
+    "model_id": "replace-with-your-compatible-model",
+    "reasoning": "high",
+    "context_tokens": 128000,
+    "max_output_tokens": 4096,
+    "structured_outputs": true,
+    "tool_calling": true,
+    "input_inr_per_million": 0,
+    "output_inr_per_million": 0,
+    "enabled": false
+  },
+  {
+    "name": "cloud-reasoning-gemini",
+    "provider": "gemini",
+    "model_id": "replace-with-your-compatible-model",
+    "reasoning": "high",
+    "context_tokens": 128000,
+    "max_output_tokens": 4096,
+    "structured_outputs": true,
+    "tool_calling": true,
+    "input_inr_per_million": 0,
+    "output_inr_per_million": 0,
+    "enabled": false
+  },
+  {
+    "name": "cloud-economy",
+    "provider": "openai",
+    "model_id": "replace-with-your-compatible-model",
+    "reasoning": "standard",
+    "context_tokens": 32768,
+    "max_output_tokens": 2048,
+    "structured_outputs": true,
+    "tool_calling": false,
+    "input_inr_per_million": 0,
+    "output_inr_per_million": 0,
+    "enabled": false
+  },
+  {
+    "name": "local-private",
+    "provider": "ollama",
+    "model_id": "replace-with-your-installed-model",
+    "reasoning": "standard",
+    "context_tokens": 32768,
+    "max_output_tokens": 2048,
+    "structured_outputs": true,
+    "tool_calling": false,
+    "input_inr_per_million": 0,
+    "output_inr_per_million": 0,
+    "enabled": false
+  }
+]
