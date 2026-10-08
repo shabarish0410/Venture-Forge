@@ -60,19 +60,31 @@ def build_context(session, venture, body):
         experiments.append({"id": item.id, "protocol": item.protocol, "protocol_hash": item.protocol_hash, "result": experiment_result(item, observations, receipts), "observation_hash": digest([encode(o) for o in observations])})
     evidence_ids = list(dict.fromkeys(evidence_ids))
     if len(evidence_ids) > 100: raise ValueError("CONTEXT_TOO_LARGE")
+    requested_quotes = {}
+    def find_quotes(value):
+        if isinstance(value, dict):
+            if value.get("source_id") and isinstance(value.get("quote"), str) and value["quote"]:
+                requested_quotes.setdefault(value["source_id"], set()).add(value["quote"])
+            for child in value.values(): find_quotes(child)
+        elif isinstance(value, list):
+            for child in value: find_quotes(child)
+    find_quotes(body.parameters)
     evidence = []
     for ident in evidence_ids:
         item = scoped(session, Receipt, ident, venture)
         if not item: raise ValueError("RECORD_NOT_FOUND")
         if item.withdrawn: raise ValueError("SOURCE_WITHDRAWN")
         if item.hypothesis_id != body.hypothesis_id: raise ValueError("HYPOTHESIS_SCOPE")
-        evidence.append(encode(item))
+        encoded = encode(item)
+        # Verify requested passages before redaction, without disclosing the rest of a source.
+        encoded["selected_quote_hashes"] = sorted(hashlib.sha256(q.encode()).hexdigest() for q in requested_quotes.get(ident, ()) if q in item.content)
+        evidence.append(encoded)
     # Economics never receives raw interview text; exact provenance still travels with the numbers.
     full_source_agents = {"research", "customer", "competitor", "ecosystem", "passport"}
     if body.agent_id not in full_source_agents:
         def narrow(value):
             if isinstance(value, dict):
-                return {k: ("[Original source text omitted]" if k in {"excerpt", "notes", "statement", "content", "answer"} else narrow(v)) for k, v in value.items()}
+                return {k: ("[Original source text omitted]" if k in {"excerpt", "notes", "statement", "content", "answer", "quote"} else narrow(v)) for k, v in value.items()}
             if isinstance(value, list): return [narrow(v) for v in value]
             return value
         # Preserve the original artifact fingerprint, while passing only its relevant derived fields.

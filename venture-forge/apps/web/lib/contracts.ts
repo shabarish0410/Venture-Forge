@@ -517,6 +517,108 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ventures/{venture_id}/research/sources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search Saved */
+        get: operations["search_saved_api_v1_ventures__venture_id__research_sources_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ventures/{venture_id}/research/read-file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Read File */
+        post: operations["read_file_api_v1_ventures__venture_id__research_read_file_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ventures/{venture_id}/research/read-source": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Read Source */
+        post: operations["read_source_api_v1_ventures__venture_id__research_read_source_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ventures/{venture_id}/research/web-search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Search Web */
+        post: operations["search_web_api_v1_ventures__venture_id__research_web_search_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ventures/{venture_id}/mvp-exports/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Preview */
+        post: operations["preview_api_v1_ventures__venture_id__mvp_exports_preview_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ventures/{venture_id}/mvp-exports/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Download */
+        post: operations["download_api_v1_ventures__venture_id__mvp_exports_download_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -560,6 +662,8 @@ export interface components {
             experiment_ids?: string[];
             /** Stage Id */
             stage_id?: string | null;
+            /** Supersedes Artifact Id */
+            supersedes_artifact_id?: string | null;
             /**
              * Mode
              * @default AUTO
@@ -688,6 +792,39 @@ export interface components {
             /** Title */
             title: string;
             protocol: components["schemas"]["Protocol"];
+        };
+        /** ExportApproval */
+        ExportApproval: {
+            /** Artifact Ids */
+            artifact_ids: string[];
+            /** Purpose */
+            purpose: string;
+            /** Preview Hash */
+            preview_hash: string;
+            /**
+             * Format
+             * @enum {string}
+             */
+            format: "pdf" | "docx" | "csv" | "json";
+            /**
+             * Approved
+             * @constant
+             */
+            approved: true;
+        };
+        /** ExportSelection */
+        ExportSelection: {
+            /** Artifact Ids */
+            artifact_ids: string[];
+            /** Purpose */
+            purpose: string;
+        };
+        /** FileRead */
+        FileRead: {
+            /** Filename */
+            filename: string;
+            /** Content Base64 */
+            content_base64: string;
         };
         /** FounderView */
         FounderView: {
@@ -1008,6 +1145,16 @@ export interface components {
              */
             max_cost_inr: 0;
         };
+        /** SourceRead */
+        SourceRead: {
+            /** Url */
+            url: string;
+            /**
+             * Approved
+             * @constant
+             */
+            approved: true;
+        };
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -1065,6 +1212,16 @@ export interface components {
              * Format: date-time
              */
             updated_at: string;
+        };
+        /** WebSearch */
+        WebSearch: {
+            /** Query */
+            query: string;
+            /**
+             * Approved
+             * @constant
+             */
+            approved: true;
         };
     };
     responses: never;
@@ -2071,6 +2228,214 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["Command"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    search_saved_api_v1_ventures__venture_id__research_sources_get: {
+        parameters: {
+            query?: {
+                q?: string;
+            };
+            header?: never;
+            path: {
+                venture_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_file_api_v1_ventures__venture_id__research_read_file_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                venture_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FileRead"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_source_api_v1_ventures__venture_id__research_read_source_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                venture_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SourceRead"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    search_web_api_v1_ventures__venture_id__research_web_search_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                venture_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WebSearch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    preview_api_v1_ventures__venture_id__mvp_exports_preview_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                venture_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExportSelection"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    download_api_v1_ventures__venture_id__mvp_exports_download_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                venture_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExportApproval"];
             };
         };
         responses: {

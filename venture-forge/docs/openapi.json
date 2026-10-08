@@ -1472,6 +1472,289 @@
           }
         }
       }
+    },
+    "/api/v1/ventures/{venture_id}/research/sources": {
+      "get": {
+        "summary": "Search Saved",
+        "operationId": "search_saved_api_v1_ventures__venture_id__research_sources_get",
+        "parameters": [
+          {
+            "name": "venture_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Venture Id"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 400,
+              "default": "",
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ventures/{venture_id}/research/read-file": {
+      "post": {
+        "summary": "Read File",
+        "operationId": "read_file_api_v1_ventures__venture_id__research_read_file_post",
+        "parameters": [
+          {
+            "name": "venture_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Venture Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FileRead"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ventures/{venture_id}/research/read-source": {
+      "post": {
+        "summary": "Read Source",
+        "operationId": "read_source_api_v1_ventures__venture_id__research_read_source_post",
+        "parameters": [
+          {
+            "name": "venture_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Venture Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SourceRead"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ventures/{venture_id}/research/web-search": {
+      "post": {
+        "summary": "Search Web",
+        "operationId": "search_web_api_v1_ventures__venture_id__research_web_search_post",
+        "parameters": [
+          {
+            "name": "venture_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Venture Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebSearch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ventures/{venture_id}/mvp-exports/preview": {
+      "post": {
+        "summary": "Preview",
+        "operationId": "preview_api_v1_ventures__venture_id__mvp_exports_preview_post",
+        "parameters": [
+          {
+            "name": "venture_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Venture Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportSelection"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ventures/{venture_id}/mvp-exports/download": {
+      "post": {
+        "summary": "Download",
+        "operationId": "download_api_v1_ventures__venture_id__mvp_exports_download_post",
+        "parameters": [
+          {
+            "name": "venture_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Venture Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportApproval"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1580,6 +1863,18 @@
               }
             ],
             "title": "Stage Id"
+          },
+          "supersedes_artifact_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 36
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supersedes Artifact Id"
           },
           "mode": {
             "type": "string",
@@ -1906,6 +2201,106 @@
           "protocol"
         ],
         "title": "ExperimentCreate"
+      },
+      "ExportApproval": {
+        "properties": {
+          "artifact_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 15,
+            "minItems": 1,
+            "title": "Artifact Ids"
+          },
+          "purpose": {
+            "type": "string",
+            "maxLength": 300,
+            "minLength": 5,
+            "title": "Purpose"
+          },
+          "preview_hash": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 64,
+            "title": "Preview Hash"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "pdf",
+              "docx",
+              "csv",
+              "json"
+            ],
+            "title": "Format"
+          },
+          "approved": {
+            "type": "boolean",
+            "const": true,
+            "title": "Approved"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "artifact_ids",
+          "purpose",
+          "preview_hash",
+          "format",
+          "approved"
+        ],
+        "title": "ExportApproval"
+      },
+      "ExportSelection": {
+        "properties": {
+          "artifact_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 15,
+            "minItems": 1,
+            "title": "Artifact Ids"
+          },
+          "purpose": {
+            "type": "string",
+            "maxLength": 300,
+            "minLength": 5,
+            "title": "Purpose"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "artifact_ids",
+          "purpose"
+        ],
+        "title": "ExportSelection"
+      },
+      "FileRead": {
+        "properties": {
+          "filename": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[^/\\\\:]+\\.(?:pdf|txt|md|csv)$",
+            "title": "Filename"
+          },
+          "content_base64": {
+            "type": "string",
+            "maxLength": 5600000,
+            "minLength": 1,
+            "title": "Content Base64"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "filename",
+          "content_base64"
+        ],
+        "title": "FileRead"
       },
       "FounderView": {
         "properties": {
@@ -2638,6 +3033,28 @@
         ],
         "title": "RunCreate"
       },
+      "SourceRead": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 8,
+            "title": "Url"
+          },
+          "approved": {
+            "type": "boolean",
+            "const": true,
+            "title": "Approved"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "url",
+          "approved"
+        ],
+        "title": "SourceRead"
+      },
       "ValidationError": {
         "properties": {
           "loc": {
@@ -2792,6 +3209,28 @@
           "updated_at"
         ],
         "title": "VentureView"
+      },
+      "WebSearch": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 400,
+            "minLength": 3,
+            "title": "Query"
+          },
+          "approved": {
+            "type": "boolean",
+            "const": true,
+            "title": "Approved"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "query",
+          "approved"
+        ],
+        "title": "WebSearch"
       }
     }
   }

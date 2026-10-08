@@ -3,13 +3,13 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { api, type Passport } from "@/lib/api";
 import { records, type Tool } from "./tools";
+import { ParameterFields, readParameters, referencedRecords, WorkspaceResult, type WorkspaceReport, type Schema } from "./schema-fields";
 
-type Schema = { type?: string; title?: string; description?: string; default?: unknown; enum?: string[]; anyOf?: Schema[]; items?: Schema; minimum?: number; maximum?: number; minLength?: number; maxLength?: number; format?: string; $ref?: string; properties?: Record<string, Schema>; required?: string[]; $defs?: Record<string, Schema> };
 type ModelRequirements = { task: string; reasoning: string; min_context_tokens: number; max_output_tokens: number; structured_outputs: boolean; tool_calling: boolean; deterministic_operations: string[] };
 type ModelProfile = { name: string; provider: string; model_id: string; ready: boolean; location: string; reasoning: string; context_tokens: number; tool_calling: boolean; structured_outputs: boolean };
-type Specialist = { id: Tool; name: string; workspace: string; description: string; receives: Tool[]; sends: Tool[]; tools: string[]; output_type: string; parameters_schema: Schema; model_requirements: ModelRequirements };
+type Specialist = { id: Tool; name: string; workspace: string; description: string; receives: Tool[]; sends: Tool[]; tools: string[]; output_type: string; parameters_schema: Schema; model_requirements: ModelRequirements; mvp?: { modules: string[]; source_pages: string; model_families: Record<string, string>[]; patterns: Record<string, string>[] } };
 type Catalog = { agents: Specialist[]; templates: { id: string; name: string; stages: { agent_id: Tool; dependencies: Tool[] }[] }[]; model: { configured: boolean; policy: string; default_mode: string; profiles: ModelProfile[] } };
-export type AgentRun = { id: string; agent_id: Tool; stage_id?: string; objective: string; status: string; artifact_id?: string; result_hash: string; error_code?: string; cost_inr: number; trace: unknown[]; context: unknown; result: { summary?: string; data?: Record<string, unknown>; unknowns?: string[]; limitations?: string[]; evidence_ids?: string[]; next_action?: string; evidence_class?: string; mode?: string } };
+export type AgentRun = { id: string; agent_id: Tool; hypothesis_id: string; stage_id?: string; objective: string; status: string; artifact_id?: string; result_hash: string; error_code?: string; cost_inr: number; trace: unknown[]; context: unknown; request?: { parameters?: Record<string, unknown> }; result: { summary?: string; data?: Record<string, unknown>; unknowns?: string[]; limitations?: string[]; evidence_ids?: string[]; next_action?: string; evidence_class?: string; mode?: string } };
 type Stage = { id: string; agent_id: Tool; dependencies: Tool[]; status: string; run_id?: string; artifact_id?: string };
 type Pipeline = { id: string; template: string; name: string; hypothesis_id: string; objective: string; status: string; stages: Stage[] };
 type Handoff = { id: string; from_run_id: string; to_agent_id: Tool; artifact_id: string; status: string };
@@ -21,26 +21,6 @@ function useCatalog() {
   return { catalog, error };
 }
 const label = (s: string) => s.replaceAll("_", " ");
-function effective(field: Schema, root: Schema): Schema {
-  if (field.$ref) return effective(root.$defs?.[field.$ref.split("/").at(-1)!] || {}, root);
-  if (field.anyOf) return { ...effective(field.anyOf.find(s => s.type !== "null") || {}, root), ...field, anyOf: undefined };
-  return field;
-}
-function parameterValue(field: Schema, root: Schema, value: string) {
-  const resolved = effective(field, root);
-  // Decimal schemas accept strings: preserve the typed amount for server arithmetic.
-  const decimal = field.anyOf?.some(s => s.type === "number") && field.anyOf?.some(s => s.type === "string");
-  return resolved.type === "integer" || (resolved.type === "number" && !decimal) ? Number(value) : value;
-}
-function Collection({ name, schema, root, sources }: { name: string; schema: Schema; root: Schema; sources: { id: string; title: string }[] }) {
-  const [rows, setRows] = useState<string[]>([]); const item = effective(schema.items || {}, root);
-  return <div className="wide-field agent-collection"><h3>{label(name)}</h3><p className="section-description">Enter your own records. Linked sources are included in this run.</p>{rows.map((id, index) => <fieldset key={id}><legend>{name === "alternatives" ? "Alternative" : "Opportunity"} {index + 1}</legend><div className="tool-fields">{Object.entries(item.properties || {}).map(([key, original]) => {
-    const f = effective(original, root), fieldName = `parameter:${name}:${id}:${key}`, required = item.required?.includes(key);
-    return <label key={key}>{label(key)}{key === "source_id" ? <select name={fieldName} required={required} aria-label={`${label(key)} ${index + 1}`}><option value="">Unknown / no source</option>{sources.map(s => <option key={s.id} value={s.id}>{s.title}</option>)}</select>
-      : f.enum ? <select name={fieldName} defaultValue={String(f.default || f.enum[0])} aria-label={`${label(key)} ${index + 1}`}>{f.enum.map(v => <option key={v}>{v}</option>)}</select>
-      : <input name={fieldName} required={required} type={f.format === "date" ? "date" : key === "official_url" ? "url" : f.type === "number" || f.type === "integer" ? "number" : "text"} min={f.minimum} max={f.maximum} step="any" minLength={f.minLength} maxLength={f.maxLength} defaultValue={f.default == null ? "" : String(f.default)}/>}</label>;
-  })}</div><button type="button" className="text-button danger" onClick={() => setRows(rows.filter(r => r !== id))}>Remove record {index + 1}</button></fieldset>)}<button type="button" className="button secondary" onClick={() => setRows([...rows, crypto.randomUUID()])}>Add {name === "alternatives" ? "alternative" : "opportunity"}</button></div>;
-}
 function Value({ value }: { value: unknown }) {
   if (value === null || value === undefined) return <span className="subtle">Unknown</span>;
   if (Array.isArray(value)) return value.length ? <ul className="agent-values">{value.map((v, i) => <li key={i}><Value value={v}/></li>)}</ul> : <span className="subtle">None recorded</span>;
@@ -70,9 +50,12 @@ export function AgentConsole({ agent, passport, onSaved, stage, pipeline }: { ag
   const { catalog, error: catalogError } = useCatalog();
   const [error, setError] = useState(""), [busy, setBusy] = useState(false), [mode, setMode] = useState("AUTO");
   const [hypothesis, setHypothesis] = useState(pipeline?.hypothesis_id || passport.hypotheses[0]?.id || "");
+  const [imported, setImported] = useState<{ id: string; hypothesis: string; parameters: Record<string, unknown> } | null>(null);
   const spec = catalog?.agents.find(a => a.id === agent);
   const data = records(passport), all = agentRecords(passport);
-  const runs = all.agent_runs.filter(r => stage ? r.stage_id === stage.id : r.agent_id === agent && !r.stage_id);
+  const runs = all.agent_runs.filter(r => stage ? r.stage_id === stage.id : r.agent_id === agent && r.hypothesis_id === hypothesis && !r.stage_id);
+  const initial = imported?.hypothesis === hypothesis ? imported.parameters : runs.at(-1)?.request?.parameters;
+  const upstreamModels = all.agent_runs.filter(r => r.agent_id === "model" && r.hypothesis_id === hypothesis && data.artifacts.some(a => a.id === r.artifact_id && a.status === "ACCEPTED"));
   const base = `/ventures/${passport.venture.id}`;
   async function command(path: string, body: Record<string, unknown>) {
     await api(base + path, { method: "POST", headers: { "Idempotency-Key": crypto.randomUUID() }, body: JSON.stringify({ ...body, expected_revision: passport.venture.revision }) });
@@ -82,22 +65,9 @@ export function AgentConsole({ agent, passport, onSaved, stage, pipeline }: { ag
     event.preventDefault(); if (!spec) return; setBusy(true); setError("");
     const f = new FormData(event.currentTarget);
     try {
-      const parameters: Record<string, unknown> = {};
-      for (const [key, field] of Object.entries(spec.parameters_schema.properties || {})) {
-        const s = effective(field, spec.parameters_schema), v = String(f.get(`parameter:${key}`) ?? "");
-        if (s.type === "array") {
-          const items: Record<string, Record<string, unknown>> = {}; const itemSchema = effective(s.items || {}, spec.parameters_schema);
-          for (const [name, value] of f.entries()) {
-            if (!name.startsWith(`parameter:${key}:`) || !String(value).trim()) continue;
-            const [, , row, property] = name.split(":"), prop = itemSchema.properties?.[property] || {};
-            (items[row] ||= {})[property] = parameterValue(prop, spec.parameters_schema, String(value));
-          }
-          parameters[key] = Object.values(items);
-        } else if (s.type === "boolean") parameters[key] = v === "on";
-        else if (v.trim()) parameters[key] = s.type === "array" || s.type === "object" ? JSON.parse(v) : parameterValue(field, spec.parameters_schema, v);
-      }
-      const linked = Object.values(parameters).flatMap(value => Array.isArray(value) ? value.map(item => item.source_id).filter(Boolean) : []);
-      await command("/agent-runs", { agent_id: agent, objective: f.get("objective"), hypothesis_id: hypothesis, stage_id: stage?.id, parameters, evidence_ids: [...new Set([...f.getAll("evidence"), ...linked])], artifact_ids: f.getAll("artifact"), experiment_ids: f.getAll("experiment"), mode, data_policy: f.get("data_policy") || "cloud_allowed", preferred_profile: f.get("preferred_profile") || null, allow_model_processing: f.get("model-consent") === "on", budget: { max_steps: Number(f.get("steps")), max_seconds: Number(f.get("seconds")), max_cost_inr: mode === "RULE" ? 0 : Number(f.get("cost")) } });
+      const parameters = readParameters(f, spec.parameters_schema);
+      const linked = referencedRecords(parameters, "source_id");
+      await command("/agent-runs", { supersedes_artifact_id: f.get("supersedes_artifact_id") || null, agent_id: agent, objective: f.get("objective"), hypothesis_id: hypothesis, stage_id: stage?.id, parameters, evidence_ids: [...new Set([...f.getAll("evidence"), ...linked])], artifact_ids: [...new Set([...f.getAll("artifact"), ...referencedRecords(parameters, "artifact_id")])], experiment_ids: f.getAll("experiment"), mode, data_policy: f.get("data_policy") || "cloud_allowed", preferred_profile: f.get("preferred_profile") || null, allow_model_processing: f.get("model-consent") === "on", budget: { max_steps: Number(f.get("steps")), max_seconds: Number(f.get("seconds")), max_cost_inr: mode === "RULE" ? 0 : Number(f.get("cost")) } });
     } catch (e) { setError(e instanceof SyntaxError ? "Check the alternatives or opportunities JSON. Copy the example structure and enter your own records." : e instanceof Error ? e.message : "Run could not be queued."); }
     finally { setBusy(false); }
   }
@@ -111,18 +81,20 @@ export function AgentConsole({ agent, passport, onSaved, stage, pipeline }: { ag
     <div className="section-top"><div><span className="eyebrow">SPECIALIST EXECUTION</span><h2>{spec?.name || "Loading specialist…"}</h2></div><span className="pill">{stage?.status.replaceAll("_", " ") || "Bounded mission"}</span></div>
     {(error || catalogError) && <p role="alert" className="error">{error || catalogError}</p>}
     {spec && catalog && <><p className="section-description">{spec.description} Accepted results become versioned Passport records and handoffs.</p>
+      {spec.mvp && <><div className="mvp-modules">{spec.mvp.modules.map(m => <span className="pill" key={m}>{m}</span>)}</div>
+        {!!spec.mvp.model_families.length && <details className="mvp-library"><summary>Explore the business-model families</summary><WorkspaceResult report={{ sections: ["relationship", "operating", "delivery", "pricing", "combination"].map(layer => ({ key: layer, title: label(layer), description: "Choose each layer separately; combine only when the value exchange and economics are clear.", rows: spec.mvp!.model_families.filter(f => f.layer === layer) })), gaps: [], next_action: "" }}/></details>}
+        {!!spec.mvp.patterns.length && <details className="mvp-library"><summary>Explore MVP patterns and what they can prove</summary><WorkspaceResult report={{ sections: [{ key: "patterns", title: "MVP patterns", description: "Choose the smallest credible test for your decision.", rows: spec.mvp.patterns }], gaps: [], next_action: "" }}/></details>}</>}
       {canRun && <form onSubmit={submit} className="agent-form">
         <label>Specialist objective<textarea name="objective" required minLength={10} maxLength={2000} defaultValue={pipeline?.objective} placeholder="Which decision should this specialist help you make?" rows={2}/></label>
         <label>Linked hypothesis<select value={hypothesis} disabled={!!pipeline} onChange={e => setHypothesis(e.target.value)}>{passport.hypotheses.map(h => <option key={h.id} value={h.id}>{h.statement}</option>)}</select></label>
-        <div className="tool-fields">{Object.entries(spec.parameters_schema.properties || {}).map(([key, original]) => {
-          const field = effective(original, spec.parameters_schema), required = spec.parameters_schema.required?.includes(key), isArray = field.type === "array" || field.type === "object";
-          if (isArray) return <Collection key={key} name={key} schema={field} root={spec.parameters_schema} sources={data.evidence.filter(e => !e.withdrawn && e.hypothesis_id === hypothesis)}/>;
-          return <label key={key}>{label(key)}
-            {field.enum ? <select name={`parameter:${key}`} defaultValue={String(field.default || field.enum[0])}>{field.enum.map(v => <option key={v}>{v}</option>)}</select>
-              : field.type === "boolean" ? <input name={`parameter:${key}`} type="checkbox" defaultChecked={field.default === true}/>
-              : <input name={`parameter:${key}`} required={required} type={field.format === "date" ? "date" : field.type === "integer" || field.type === "number" ? "number" : "text"} min={field.minimum} max={field.maximum} step={field.type === "integer" ? 1 : "any"} minLength={field.minLength} maxLength={field.maxLength} defaultValue={field.default == null ? "" : String(field.default)}/>}<small>{field.description}</small>
-          </label>;
-        })}</div>
+        {!stage && <label>Save as a new version of<select name="supersedes_artifact_id"><option value="">Separate artifact (keep earlier versions current)</option>{runs.filter(r => data.artifacts.some(a => a.id === r.artifact_id && a.status === "ACCEPTED")).map(r => <option key={r.id} value={r.artifact_id}>{r.objective}</option>)}</select><small>Accepting a replacement archives the old version and makes dependent results stale.</small></label>}
+        {agent === "finance" && <details><summary>Import reviewed Model Studio drivers</summary><p>Only monthly, priced options can seed this monthly plan. Costs and collection assumptions still need your review.</p>{upstreamModels.map(r => {
+          const report = r.result.data?.workspace as WorkspaceReport | undefined;
+          const driver = report?.sections.find(s => s.key === "finance_handoff")?.rows[0];
+          return driver && driver.period === "month" && driver.price_inr != null && driver.units_per_period != null ? <button type="button" className="button secondary" key={r.id} onClick={() => setImported({ id: r.artifact_id!, hypothesis, parameters: { ...runs.at(-1)?.request?.parameters, price: driver.price_inr, volume: driver.units_per_period, period: driver.period } })}>Use drivers from {String(driver.name)}</button> : <p key={r.id}>This model needs an explicit monthly price and volume.</p>;
+        })}{!upstreamModels.length && <p>Accept a Model Studio option first.</p>}</details>}
+        {agent === "finance" && imported?.hypothesis === hypothesis && <><input type="hidden" name="artifact" value={imported.id}/><p>Imported price and volume are hypotheses. This run will link the selected Model Studio version.</p></>}
+        <ParameterFields key={`${agent}:${hypothesis}:${runs.at(-1)?.id || "new"}:${imported?.id || ""}`} schema={spec.parameters_schema} initial={initial} sources={data.evidence.filter(e => !e.withdrawn && e.hypothesis_id === hypothesis)} artifacts={data.artifacts.filter(a => a.status === "ACCEPTED" && (agent === "passport" || spec.receives.includes(a.capability as Tool)))}/>
         <details className="agent-inputs"><summary>Choose scoped evidence and accepted inputs</summary><p className="section-description">Pipeline prerequisites are included automatically. Choose additional records for this hypothesis. Missing evidence stays unknown.</p>
           {data.evidence.filter(e => !e.withdrawn && e.hypothesis_id === hypothesis).map(e => <label className="agent-check" key={e.id}><input name="evidence" value={e.id} type="checkbox"/><span>{e.title}<small>{e.id} · {e.consent}</small></span></label>)}
           {data.artifacts.filter(a => a.status === "ACCEPTED" && (agent === "passport" || spec.receives.includes(a.capability as Tool))).map(a => <label className="agent-check" key={a.id}><input name="artifact" value={a.id} type="checkbox"/><span>{a.title}<small>{a.capability} · accepted</small></span></label>)}
@@ -136,7 +108,8 @@ export function AgentConsole({ agent, passport, onSaved, stage, pipeline }: { ag
         {["QUEUED", "RUNNING"].includes(run.status) && <p>Waiting for the local worker. This page refreshes while work is pending.</p>}
         {run.result.summary && <p>{run.result.summary}</p>}
         {run.result.evidence_class && <p className="source-location">{label(run.result.evidence_class)} · {run.result.mode} · ₹{run.cost_inr.toFixed(4)}</p>}
-        {run.result.data && <details open={run.status === "AWAITING_REVIEW"}><summary>Specialist result</summary><Value value={run.result.data}/></details>}
+        {!!run.result.data?.workspace && <details open={run.status === "AWAITING_REVIEW"}><summary>Workspace result</summary><WorkspaceResult report={run.result.data!.workspace as WorkspaceReport}/></details>}
+        {run.result.data && <details><summary>All specialist data and calculations</summary><Value value={Object.fromEntries(Object.entries(run.result.data).filter(([key]) => key !== "workspace"))}/></details>}
         {!!run.result.unknowns?.length && <div><strong>Unknowns and required inputs</strong><ul className="unknown-list">{run.result.unknowns.map((u, i) => <li key={i}>{u}</li>)}</ul></div>}
         {run.result.next_action && <p><strong>Next action:</strong> {run.result.next_action}</p>}
         {!!run.result.limitations?.length && <ul className="unknown-list">{run.result.limitations.map((u, i) => <li key={i}>{u}</li>)}</ul>}

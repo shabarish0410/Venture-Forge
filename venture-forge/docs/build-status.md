@@ -1,5 +1,9 @@
 # Tool-first build status
 
+## October 7 founder MVP audit
+
+The 75-page specialist specification was compared against the implementation and narrowed to the user's confirmed MVP scope. Six priority workflows now have structured evidence/decision forms and reviewed reports; the seven supporting apps have bounded usable MVPs. All use the existing founder permissions, queue, review gates and Passport. See the [application-by-application audit, usage and verification limits](pdf-implementation-audit.md). This does not claim institution/collaboration, advanced simulation, live programme feeds or future-roadmap parity.
+
 ## Sign-in design
 
 Public email/password signup and Google/GitHub authorization-code authentication share the existing founder/session/Passport architecture. The requested GET provider starts and existing origin-protected POST/link routes coexist. There is no application allowlist. Migration `0006` adds profile and login metadata, account status, onboarding status, session authentication metadata and shared database rate limits. Fresh installs, upgrades, rollback/reapplication and founder/identity/session/Passport preservation checks pass. Disabled accounts are denied; failed OAuth attempts preserve the existing session and Passport. Account Settings connects either provider and supports password setup/change with session revocation. Matching emails never silently link accounts. Provider credentials remain pending the [setup steps](sign-in.md); see the [public authentication implementation report](public-authentication.md).

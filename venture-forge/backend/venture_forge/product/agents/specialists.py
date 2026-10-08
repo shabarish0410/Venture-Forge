@@ -42,7 +42,10 @@ def execute(agent_id, parameters, context):
     summary = spec.description
     action = "Review the proposal and choose the next evidence mission."
     data = {}
-    p = parameters
+    p = {key: value for key, value in parameters.items() if key != "workspace"}
+    from .workspace_contracts import WORKSPACES
+    from .workspace_reports import build_report
+    workspace = WORKSPACES[agent_id].model_validate(parameters.get("workspace", {})).model_dump(mode="json")
     if agent_id == "home":
         fields = {"purpose": context["concept"].get("idea", "unknown"), "user": context["concept"].get("customer_segment", "unknown"), "geography": context["concept"].get("geography", "unknown"), **p}
         unknowns = [f"{k} is unknown" for k, v in fields.items() if v == "unknown"]
@@ -70,7 +73,8 @@ def execute(agent_id, parameters, context):
         cls = "CUSTOMER_REPORTED"
         interviews = [r for r in evidence if r["kind"] == "interview" and r["consent"] in {"notes_only", "quote_permitted"}]
         unique = {r["participant_code"] for r in interviews}
-        if not interviews: blockers.append("Capture a consented real interview before accepting a customer synthesis.")
+        if not interviews and workspace["mode"] != "plan": blockers.append("Capture a consented real interview before accepting a customer synthesis.")
+        if workspace["mode"] == "plan": cls = "FOUNDER_ASSUMPTION"
         invited = p["invited"] or len(unique)
         if invited < len(unique): blockers.append("Invited denominator cannot be smaller than the distinct interviewed participants.")
         data = {"invited": invited, "interviewed": len(unique), "nonresponse": max(0, invited - len(unique)), "observation_ledger": [{"source_id": r["id"], "participant_code": r["participant_code"], "notes": r["content"], "consent": r["consent"], "relation": r["relation"], "limitations": r["limitations"]} for r in interviews], "contrary_receipts": [r["id"] for r in interviews if r["relation"] == "contradicts"], "interview_guide": ["Tell me about the last time this happened.", "What did you do, and what did it cost?", "What alternatives did you try?", "Who decided or paid for the current solution?"], "purchase_evidence": "unknown"}
@@ -184,4 +188,12 @@ def execute(agent_id, parameters, context):
         cls = "DERIVED_VIEW"
         data = {"accepted_artifact_ids": artifact_ids, "active_evidence_ids": list(known_sources), "readiness": {"reviewed_artifacts": len(artifact_ids), "locked_experiments": len(context["experiments"]), "scope": context["objective"]}, "evidence_confidence": {"source_count": len(evidence), "contrary_sources": sum(r["relation"] == "contradicts" for r in evidence), "independently_verified": False}, "founder_capability": {"practice_records": sum(a["capability"] == "academy" for a in context["artifacts"]), "independent_transfer": "unknown"}, "versions": [{"artifact_id": a["id"], "hash": a["hash"]} for a in context["artifacts"]]}
         action = "Review the evidence trail, keep assumptions visible and select the next real mission."
-    return Result(agent_id=agent_id, specialist=spec.name, output_type=spec.output, status="NEEDS_INPUT" if blockers else "PROPOSED", summary=summary, data=data, evidence_ids=list(known_sources), artifact_ids=artifact_ids, unknowns=blockers + unknowns, limitations=limits, next_action=action, handoffs=list(spec.sends), evidence_class=cls), tools
+    data["workspace"] = build_report(agent_id, p, workspace, context, data)
+    unknowns.extend(data["workspace"]["gaps"])
+    if agent_id == "research" and workspace["claims"]:
+        blockers.extend(gap for gap in data["workspace"]["gaps"] if "exact passage" in gap)
+    if agent_id == "customer" and workspace["observations"]:
+        blockers.extend(gap for gap in data["workspace"]["gaps"] if "consented interview" in gap)
+    if agent_id == "ecosystem" and not data["shortlist"]:
+        blockers.append("No current opportunity meets the selected filters; expired and mismatched records are excluded.")
+    return Result(agent_id=agent_id, specialist=spec.name, output_type=spec.output, status="NEEDS_INPUT" if blockers else "PROPOSED", summary=summary, data=data, evidence_ids=list(known_sources), artifact_ids=artifact_ids, unknowns=blockers + unknowns, limitations=limits, next_action=data["workspace"]["next_action"], handoffs=list(spec.sends), evidence_class=cls), tools

@@ -8,13 +8,14 @@ if (-not (Test-Path -LiteralPath $pythonPath)) {
     & $pythonPath -m pip install -r requirements.lock -e .
     if ($LASTEXITCODE -ne 0) { throw 'Backend dependency installation failed.' }
 }
-& $pythonPath -c "import importlib.util, sys; sys.exit(0 if all(importlib.util.find_spec(name) for name in ('jwt', 'cryptography', 'email_validator')) else 1)"
+& $pythonPath -c "import importlib.util, sys; sys.exit(0 if all(importlib.util.find_spec(name) for name in ('jwt', 'cryptography', 'email_validator', 'reportlab', 'docx', 'pypdf')) else 1)"
 if ($LASTEXITCODE -ne 0) {
     & $pythonPath -m pip install -r requirements.lock -e .
-    if ($LASTEXITCODE -ne 0) { throw 'OAuth dependency installation failed.' }
+    if ($LASTEXITCODE -ne 0) { throw 'Application dependency installation failed.' }
 }
 if (-not (Test-Path -LiteralPath (Join-Path $projectPath 'node_modules\next'))) {
     npm ci
     if ($LASTEXITCODE -ne 0) { throw 'Web dependency installation failed.' }
 }
+$env:PYTHONPATH = Join-Path $projectPath 'backend'
 & $pythonPath scripts/run_local.py

@@ -37,6 +37,7 @@ with Session(engine) as session:
     session.add(Founder(email="browser@test.local", name="Test Founder", password_hash=hash_password("browser-test-only-password")))
     session.add(Founder(email="cycle-browser@test.local", name="Cycle Founder", password_hash=hash_password("browser-test-only-password")))
     session.add(Founder(email="agents-browser@test.local", name="Specialist Founder", password_hash=hash_password("browser-test-only-password")))
+    session.add(Founder(email="mvp-browser@test.local", name="MVP Founder", password_hash=hash_password("browser-test-only-password")))
     session.commit()
 engine.dispose()
 import threading

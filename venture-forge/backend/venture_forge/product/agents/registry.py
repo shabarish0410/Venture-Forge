@@ -2,7 +2,7 @@ from dataclasses import dataclass, replace
 from typing import Literal
 from decimal import Decimal
 from datetime import date
-from pydantic import Field
+from pydantic import Field, create_model
 from venture_forge.product.core.schemas import Input
 from venture_forge.product.core.workflow_schemas import FinanceInputs, MarketInputs
 from venture_forge.shared.model_config import ModelRequirements
@@ -44,7 +44,7 @@ class CompetitorInputs(Input):
 class ModelInputs(Input):
     buyer: str = Field(default="unknown", max_length=300)
     value_proposition: str = Field(default="unknown", max_length=2000)
-    relationship: Literal["direct", "subscription", "marketplace", "b2b2c", "unknown"] = "unknown"
+    relationship: Literal["direct", "subscription", "marketplace", "b2b2c", "unknown"] = Field(default="unknown", deprecated=True, description="Legacy input. New models use the four separate layers in workspace.options.")
     channel: str = Field(default="unknown", max_length=500)
     price_inr: Decimal | None = Field(default=None, ge=0, le=10**12)
 
@@ -141,6 +141,15 @@ for _, stages in PIPELINES.values():
             REGISTRY[source] = replace(source_spec, sends=tuple(dict.fromkeys((*source_spec.sends, target))))
 # SkillCoach's finance exercise reads only an accepted financial artifact.
 REGISTRY["academy"] = replace(REGISTRY["academy"], receives=(*REGISTRY["academy"].receives, "finance"))
+# Prior practice artifacts build a skill history; every record stays founder-scoped.
+REGISTRY["academy"] = replace(REGISTRY["academy"], receives=(*REGISTRY["academy"].receives, "academy"))
+
+from .workspace_contracts import WORKSPACES
+for ident, workspace_schema in WORKSPACES.items():
+    specialist = REGISTRY[ident]
+    contract = create_model(specialist.name + "MVPInputs", __base__=specialist.schema,
+        workspace=(workspace_schema, Field(default_factory=workspace_schema, title="MVP workspace")))
+    REGISTRY[ident] = replace(specialist, schema=contract)
 
 # Capability contracts select profiles at run time; none names a provider or model.
 _REQUIREMENTS = {

@@ -9,6 +9,8 @@ from venture_forge.product.core.workflow_schemas import Command
 from venture_forge.product.agents.runtime import build_context, current, digest, advance, invalidate, scoped, record_scope
 from venture_forge.product.agents.gateway import available
 from venture_forge.product.agents.model_router import catalog, select_route, RoutingError
+from venture_forge.product.agents.workspace_library import library
+from venture_forge.product.agents.workspace_reports import check_references
 
 
 def safe_run(run):
@@ -31,7 +33,7 @@ def read_agents(session, venture):
 def install_agents(app, db, owner, owned_venture, passport, begin, finish, fail, settings):
     @app.get("/api/v1/agents")
     def agents(founder=Depends(owner)):
-        return {"agents": [{"id": s.id, "name": s.name, "workspace": s.workspace, "description": s.description, "output_type": s.output, "tools": s.tools, "receives": s.receives, "sends": s.sends, "parameters_schema": s.schema.model_json_schema(), "model_requirements": s.model_requirements.model_dump(mode="json")} for s in REGISTRY.values()], "templates": [{"id": k, "name": name, "stages": [{"agent_id": a, "dependencies": d} for a, d in stages]} for k, (name, stages) in PIPELINES.items()], "model": {"provider": "hybrid", "configured": available(settings), "policy": settings.model_router_policy, "default_mode": "AUTO", "profiles": catalog(settings)}, "external_actions": False}
+        return {"agents": [{"id": s.id, "name": s.name, "workspace": s.workspace, "description": s.description, "output_type": s.output, "tools": s.tools, "receives": s.receives, "sends": s.sends, "parameters_schema": s.schema.model_json_schema(), "model_requirements": s.model_requirements.model_dump(mode="json"), "mvp": library(s.id)} for s in REGISTRY.values()], "templates": [{"id": k, "name": name, "stages": [{"agent_id": a, "dependencies": d} for a, d in stages]} for k, (name, stages) in PIPELINES.items()], "model": {"provider": "hybrid", "configured": available(settings), "policy": settings.model_router_policy, "default_mode": "AUTO", "profiles": catalog(settings)}, "external_actions": False}
 
     @app.post("/api/v1/ventures/{venture_id}/pipelines", status_code=201)
     def create_pipeline(venture_id: str, body: PipelineCreate, founder=Depends(owner), session=Depends(db), idempotency_key: str | None = Header(default=None)):
@@ -55,9 +57,16 @@ def install_agents(app, db, owner, owned_venture, passport, begin, finish, fail,
         if body.mode == "RULE" and body.budget.max_cost_inr != 0:
             fail("RULE_COST_ZERO", "A deterministic run must have a zero model cost cap.", 422)
         try:
-            context, fingerprints = build_context(session, venture, body)
-            parameters = body.parameters
-            parameters = REGISTRY[body.agent_id].schema.model_validate(parameters).model_dump(mode="json")
+            parameters = REGISTRY[body.agent_id].schema.model_validate(body.parameters).model_dump(mode="json")
+            context, fingerprints = build_context(session, venture, body.model_copy(update={"parameters": parameters}))
+            if body.supersedes_artifact_id:
+                previous = scoped(session, Artifact, body.supersedes_artifact_id, venture)
+                previous_run = next((r for r in record_scope(session, AgentRun, venture) if r.artifact_id == body.supersedes_artifact_id), None)
+                if not previous or previous.status != "ACCEPTED" or previous.capability != body.agent_id or not previous_run or previous_run.hypothesis_id != body.hypothesis_id:
+                    raise ValueError("VERSION_NOT_CURRENT")
+                if body.supersedes_artifact_id in fingerprints["artifacts"]:
+                    raise ValueError("VERSION_SELF_DEPENDENCY")
+            check_references(parameters, context)
             select_route(settings, REGISTRY[body.agent_id].model_requirements, 1024, body.budget.model_dump(), mode=body.mode, data_policy=body.data_policy, allow_processing=body.allow_model_processing, preferred_profile=body.preferred_profile)
         except RoutingError as error:
             messages = {"NO_CAPABLE_MODEL": "No configured profile meets this specialist's reasoning, context, structured-output or tool requirements.", "NO_PRIVACY_COMPATIBLE_MODEL": "No local profile is available. Local-only requests never use a cloud fallback.", "MODEL_COST_CAP": "No suitable model fits this run's cost cap.", "MODEL_PERMISSION_REQUIRED": "Allow processing of this run's scoped context before using a model.", "MODEL_NOT_CONFIGURED": "Configure a model profile and its server-side credentials first.", "PROFILE_UNAVAILABLE": "The requested model profile is unavailable or outside the processing policy."}
@@ -97,6 +106,14 @@ def install_agents(app, db, owner, owned_venture, passport, begin, finish, fail,
         if not current(session, run): fail("STALE_CONTEXT", "An input changed. Run the specialist again before review.", 409)
         run.status = "ACCEPTED" if body.choice == "accept" else "REJECTED"
         if body.choice == "accept":
+            supersedes = run.request.get("supersedes_artifact_id")
+            if supersedes:
+                previous = scoped(session, Artifact, supersedes, venture)
+                if not previous or previous.status != "ACCEPTED":
+                    fail("VERSION_NOT_CURRENT", "The version being replaced changed. Run the revision again.", 409)
+                previous.status = "SUPERSEDED"
+                for handoff in record_scope(session, Handoff, venture):
+                    if handoff.artifact_id == supersedes: handoff.status = "SUPERSEDED"
             artifact = Artifact(venture_id=venture.id, owner_id=founder.id, capability=run.agent_id, title=f"{REGISTRY[run.agent_id].name}: {run.objective[:200]}", inputs=run.request["parameters"], result=run.result, evidence_ids=run.result["evidence_ids"], venture_revision=venture.revision + 1, status="ACCEPTED", formula_version="specialist-v1")
             session.add(artifact)
             session.flush()

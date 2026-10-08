@@ -236,3 +236,5 @@ def install_workflows(app, db, owner, owned_venture, passport, replay, remember,
 
     from .agents import install_agents
     install_agents(app, db, owner, owned_venture, passport, begin, finish, fail, settings)
+    from .mvp import install_mvp
+    install_mvp(app, db, owner, owned_venture, fail, settings)

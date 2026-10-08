@@ -20,6 +20,7 @@ class AgentRequest(Command):
     artifact_ids: list[str] = Field(default_factory=list, max_length=40)
     experiment_ids: list[str] = Field(default_factory=list, max_length=20)
     stage_id: str | None = None
+    supersedes_artifact_id: str | None = Field(default=None, max_length=36)
     mode: Literal["AUTO", "RULE", "MODEL"] = "AUTO"
     allow_model_processing: bool = False
     data_policy: Literal["cloud_allowed", "local_only"] = "cloud_allowed"

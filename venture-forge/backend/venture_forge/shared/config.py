@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     google_client_secret: SecretStr = SecretStr("")
     github_client_id: str = ""
     github_client_secret: SecretStr = SecretStr("")
+    research_allowed_hosts: list[str] = Field(default_factory=list, max_length=50)
+    research_search_api_key: SecretStr = SecretStr("")
     model_router_policy: Literal["hybrid", "disabled"] = "hybrid"
     model_profiles: list[ModelProfile] = Field(default_factory=list, max_length=30)
     model_profiles_file: str | None = None

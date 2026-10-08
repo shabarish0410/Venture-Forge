@@ -1,0 +1,6151 @@
+{
+  "home": {
+    "input": {
+      "$defs": {
+        "HomeWorkspace": {
+          "additionalProperties": false,
+          "properties": {
+            "entry_path": {
+              "default": "idea",
+              "enum": [
+                "idea",
+                "problem",
+                "technology",
+                "research",
+                "entrepreneur"
+              ],
+              "title": "Entry Path",
+              "type": "string"
+            },
+            "founder_goal": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Founder Goal",
+              "type": "string"
+            },
+            "available_hours": {
+              "anyOf": [
+                {
+                  "maximum": 168,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Available Hours"
+            },
+            "budget_inr": {
+              "anyOf": [
+                {
+                  "maximum": 1000000000000.0,
+                  "minimum": 0.0,
+                  "type": "number"
+                },
+                {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Budget Inr"
+            },
+            "payer": {
+              "default": "unknown",
+              "maxLength": 300,
+              "title": "Payer",
+              "type": "string"
+            },
+            "approver": {
+              "default": "unknown",
+              "maxLength": 300,
+              "title": "Approver",
+              "type": "string"
+            },
+            "unknowns": {
+              "items": {
+                "$ref": "#/$defs/Unknown"
+              },
+              "maxItems": 30,
+              "title": "Unknowns",
+              "type": "array"
+            },
+            "mission_reason": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Mission Reason",
+              "type": "string"
+            },
+            "mission_completion": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Mission Completion",
+              "type": "string"
+            },
+            "tasks": {
+              "items": {
+                "$ref": "#/$defs/Task"
+              },
+              "maxItems": 20,
+              "title": "Tasks",
+              "type": "array"
+            }
+          },
+          "title": "HomeWorkspace",
+          "type": "object"
+        },
+        "Task": {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "maxLength": 300,
+              "title": "Action",
+              "type": "string"
+            },
+            "completion_evidence": {
+              "maxLength": 300,
+              "title": "Completion Evidence",
+              "type": "string"
+            },
+            "status": {
+              "default": "planned",
+              "enum": [
+                "planned",
+                "completed",
+                "abandoned"
+              ],
+              "title": "Status",
+              "type": "string"
+            },
+            "source_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Source Id"
+            },
+            "resolution": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Resolution",
+              "type": "string"
+            }
+          },
+          "required": [
+            "action",
+            "completion_evidence"
+          ],
+          "title": "Task",
+          "type": "object"
+        },
+        "Unknown": {
+          "additionalProperties": false,
+          "properties": {
+            "question": {
+              "maxLength": 300,
+              "title": "Question",
+              "type": "string"
+            },
+            "impact": {
+              "default": 3,
+              "maximum": 5,
+              "minimum": 1,
+              "title": "Impact",
+              "type": "integer"
+            },
+            "uncertainty": {
+              "default": 3,
+              "maximum": 5,
+              "minimum": 1,
+              "title": "Uncertainty",
+              "type": "integer"
+            },
+            "owner": {
+              "default": "Founder",
+              "maxLength": 300,
+              "title": "Owner",
+              "type": "string"
+            },
+            "due_on": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Due On"
+            },
+            "deferred_reason": {
+              "default": "",
+              "maxLength": 300,
+              "title": "Deferred Reason",
+              "type": "string"
+            }
+          },
+          "required": [
+            "question"
+          ],
+          "title": "Unknown",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "problem": {
+          "default": "unknown",
+          "maxLength": 2000,
+          "title": "Problem",
+          "type": "string"
+        },
+        "solution": {
+          "default": "unknown",
+          "maxLength": 2000,
+          "title": "Solution",
+          "type": "string"
+        },
+        "buyer": {
+          "default": "unknown",
+          "maxLength": 300,
+          "title": "Buyer",
+          "type": "string"
+        },
+        "beneficiary": {
+          "default": "unknown",
+          "maxLength": 300,
+          "title": "Beneficiary",
+          "type": "string"
+        },
+        "workspace": {
+          "$ref": "#/$defs/HomeWorkspace",
+          "title": "MVP workspace"
+        }
+      },
+      "title": "ForgeGuideMVPInputs",
+      "type": "object"
+    },
+    "output_variants": [
+      {
+        "$defs": {
+          "ReportSection": {
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "title": "Key",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "description": {
+                "default": "",
+                "title": "Description",
+                "type": "string"
+              },
+              "rows": {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "title": "Rows",
+                "type": "array"
+              }
+            },
+            "required": [
+              "key",
+              "title"
+            ],
+            "title": "ReportSection",
+            "type": "object"
+          },
+          "WorkspaceReport": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "const": "founder-mvp-v1",
+                "default": "founder-mvp-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "sections": {
+                "items": {
+                  "$ref": "#/$defs/ReportSection"
+                },
+                "title": "Sections",
+                "type": "array"
+              },
+              "gaps": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Gaps",
+                "type": "array"
+              },
+              "next_action": {
+                "title": "Next Action",
+                "type": "string"
+              }
+            },
+            "required": [
+              "sections",
+              "next_action"
+            ],
+            "title": "WorkspaceReport",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "model_assistance": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Assistance"
+          },
+          "workspace": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/WorkspaceReport"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "fields": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "title": "Fields",
+            "type": "object"
+          },
+          "mission": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Mission",
+            "type": "object"
+          }
+        },
+        "required": [
+          "fields",
+          "mission"
+        ],
+        "title": "ConceptMap",
+        "type": "object"
+      }
+    ],
+    "receives": [
+      "passport"
+    ],
+    "sends": [
+      "research",
+      "market",
+      "customer",
+      "competitor",
+      "model",
+      "finance",
+      "experiment",
+      "simulation",
+      "academy",
+      "ecosystem",
+      "investor",
+      "passport"
+    ],
+    "mvp": {
+      "source_pages": "9-12",
+      "release": "founder_mvp",
+      "modules": [
+        "Concept map",
+        "Stakeholders",
+        "Unknowns",
+        "Next mission"
+      ],
+      "model_families": [],
+      "patterns": []
+    }
+  },
+  "research": {
+    "input": {
+      "$defs": {
+        "Claim": {
+          "additionalProperties": false,
+          "properties": {
+            "source_id": {
+              "anyOf": [
+                {
+                  "maxLength": 80,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Source Id"
+            },
+            "quote": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Quote",
+              "type": "string"
+            },
+            "statement": {
+              "maxLength": 2000,
+              "title": "Statement",
+              "type": "string"
+            },
+            "claim_type": {
+              "default": "source_reported",
+              "enum": [
+                "source_reported",
+                "founder_assumption",
+                "inference"
+              ],
+              "title": "Claim Type",
+              "type": "string"
+            },
+            "relation": {
+              "default": "contextualizes",
+              "enum": [
+                "supports",
+                "contradicts",
+                "contextualizes"
+              ],
+              "title": "Relation",
+              "type": "string"
+            },
+            "limitation": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Limitation",
+              "type": "string"
+            }
+          },
+          "required": [
+            "statement"
+          ],
+          "title": "Claim",
+          "type": "object"
+        },
+        "ResearchWorkspace": {
+          "additionalProperties": false,
+          "properties": {
+            "decision": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Decision",
+              "type": "string"
+            },
+            "scope": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Scope",
+              "type": "string"
+            },
+            "exclusions": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Exclusions",
+              "type": "string"
+            },
+            "geography": {
+              "default": "",
+              "maxLength": 300,
+              "title": "Geography",
+              "type": "string"
+            },
+            "period": {
+              "default": "",
+              "maxLength": 300,
+              "title": "Period",
+              "type": "string"
+            },
+            "subquestions": {
+              "items": {
+                "maxLength": 300,
+                "type": "string"
+              },
+              "maxItems": 10,
+              "title": "Subquestions",
+              "type": "array"
+            },
+            "source_reviews": {
+              "items": {
+                "$ref": "#/$defs/SourceReview"
+              },
+              "maxItems": 30,
+              "title": "Source Reviews",
+              "type": "array"
+            },
+            "claims": {
+              "items": {
+                "$ref": "#/$defs/Claim"
+              },
+              "maxItems": 30,
+              "title": "Claims",
+              "type": "array"
+            }
+          },
+          "title": "ResearchWorkspace",
+          "type": "object"
+        },
+        "SourceReview": {
+          "additionalProperties": false,
+          "properties": {
+            "source_id": {
+              "title": "Source Id",
+              "type": "string"
+            },
+            "source_type": {
+              "default": "unknown",
+              "enum": [
+                "primary",
+                "official",
+                "secondary",
+                "unknown"
+              ],
+              "title": "Source Type",
+              "type": "string"
+            },
+            "publisher": {
+              "default": "unknown",
+              "maxLength": 300,
+              "title": "Publisher",
+              "type": "string"
+            },
+            "geography": {
+              "default": "unknown",
+              "maxLength": 300,
+              "title": "Geography",
+              "type": "string"
+            },
+            "method": {
+              "default": "unknown",
+              "maxLength": 2000,
+              "title": "Method",
+              "type": "string"
+            },
+            "volatility": {
+              "default": "stable",
+              "enum": [
+                "stable",
+                "price",
+                "deadline",
+                "policy"
+              ],
+              "title": "Volatility",
+              "type": "string"
+            },
+            "published_on": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Published On"
+            },
+            "review_note": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Review Note",
+              "type": "string"
+            }
+          },
+          "required": [
+            "source_id"
+          ],
+          "title": "SourceReview",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "freshness_days": {
+          "default": 365,
+          "maximum": 3650,
+          "minimum": 1,
+          "title": "Freshness Days",
+          "type": "integer"
+        },
+        "workspace": {
+          "$ref": "#/$defs/ResearchWorkspace",
+          "title": "MVP workspace"
+        }
+      },
+      "title": "EvidenceScoutMVPInputs",
+      "type": "object"
+    },
+    "output_variants": [
+      {
+        "$defs": {
+          "ReportSection": {
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "title": "Key",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "description": {
+                "default": "",
+                "title": "Description",
+                "type": "string"
+              },
+              "rows": {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "title": "Rows",
+                "type": "array"
+              }
+            },
+            "required": [
+              "key",
+              "title"
+            ],
+            "title": "ReportSection",
+            "type": "object"
+          },
+          "WorkspaceReport": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "const": "founder-mvp-v1",
+                "default": "founder-mvp-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "sections": {
+                "items": {
+                  "$ref": "#/$defs/ReportSection"
+                },
+                "title": "Sections",
+                "type": "array"
+              },
+              "gaps": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Gaps",
+                "type": "array"
+              },
+              "next_action": {
+                "title": "Next Action",
+                "type": "string"
+              }
+            },
+            "required": [
+              "sections",
+              "next_action"
+            ],
+            "title": "WorkspaceReport",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "model_assistance": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Assistance"
+          },
+          "workspace": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/WorkspaceReport"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "question": {
+            "title": "Question",
+            "type": "string"
+          },
+          "source_registry": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Source Registry",
+            "type": "array"
+          },
+          "claim_ledger": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Claim Ledger",
+            "type": "array"
+          },
+          "contradictions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Contradictions",
+            "type": "array"
+          },
+          "refresh_source_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Refresh Source Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "question",
+          "source_registry",
+          "claim_ledger",
+          "contradictions",
+          "refresh_source_ids"
+        ],
+        "title": "ResearchMemo",
+        "type": "object"
+      }
+    ],
+    "receives": [
+      "home",
+      "passport",
+      "academy"
+    ],
+    "sends": [
+      "market",
+      "competitor",
+      "model",
+      "finance",
+      "ecosystem",
+      "investor",
+      "passport",
+      "customer"
+    ],
+    "mvp": {
+      "source_pages": "13-16",
+      "release": "founder_mvp",
+      "modules": [
+        "Research brief",
+        "Sources",
+        "Claims",
+        "Cited memo"
+      ],
+      "model_families": [],
+      "patterns": []
+    }
+  },
+  "market": {
+    "input": {
+      "$defs": {
+        "DriverSource": {
+          "additionalProperties": false,
+          "properties": {
+            "source_id": {
+              "anyOf": [
+                {
+                  "maxLength": 80,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Source Id"
+            },
+            "quote": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Quote",
+              "type": "string"
+            },
+            "driver": {
+              "maxLength": 300,
+              "title": "Driver",
+              "type": "string"
+            },
+            "definition": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Definition",
+              "type": "string"
+            },
+            "unit": {
+              "default": "",
+              "maxLength": 300,
+              "title": "Unit",
+              "type": "string"
+            },
+            "owner": {
+              "default": "Founder",
+              "maxLength": 300,
+              "title": "Owner",
+              "type": "string"
+            }
+          },
+          "required": [
+            "driver"
+          ],
+          "title": "DriverSource",
+          "type": "object"
+        },
+        "MarketWorkspace": {
+          "additionalProperties": false,
+          "properties": {
+            "category": {
+              "default": "",
+              "maxLength": 300,
+              "title": "Category",
+              "type": "string"
+            },
+            "buyer": {
+              "default": "unknown",
+              "maxLength": 300,
+              "title": "Buyer",
+              "type": "string"
+            },
+            "inclusions": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Inclusions",
+              "type": "string"
+            },
+            "exclusions": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Exclusions",
+              "type": "string"
+            },
+            "value_chain": {
+              "items": {
+                "$ref": "#/$defs/ValueChainActor"
+              },
+              "maxItems": 20,
+              "title": "Value Chain",
+              "type": "array"
+            },
+            "segments": {
+              "items": {
+                "$ref": "#/$defs/Segment"
+              },
+              "maxItems": 20,
+              "title": "Segments",
+              "type": "array"
+            },
+            "selected_segment": {
+              "default": "",
+              "maxLength": 300,
+              "title": "Selected Segment",
+              "type": "string"
+            },
+            "selection_reason": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Selection Reason",
+              "type": "string"
+            },
+            "driver_sources": {
+              "items": {
+                "$ref": "#/$defs/DriverSource"
+              },
+              "maxItems": 15,
+              "title": "Driver Sources",
+              "type": "array"
+            }
+          },
+          "title": "MarketWorkspace",
+          "type": "object"
+        },
+        "Segment": {
+          "additionalProperties": false,
+          "properties": {
+            "source_id": {
+              "anyOf": [
+                {
+                  "maxLength": 80,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Source Id"
+            },
+            "quote": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Quote",
+              "type": "string"
+            },
+            "name": {
+              "maxLength": 300,
+              "title": "Name",
+              "type": "string"
+            },
+            "criteria": {
+              "maxLength": 2000,
+              "title": "Criteria",
+              "type": "string"
+            },
+            "need": {
+              "default": "unknown",
+              "maxLength": 2000,
+              "title": "Need",
+              "type": "string"
+            },
+            "access": {
+              "default": "unknown",
+              "maxLength": 2000,
+              "title": "Access",
+              "type": "string"
+            },
+            "exclusion": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Exclusion",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "criteria"
+          ],
+          "title": "Segment",
+          "type": "object"
+        },
+        "ValueChainActor": {
+          "additionalProperties": false,
+          "properties": {
+            "actor": {
+              "maxLength": 300,
+              "title": "Actor",
+              "type": "string"
+            },
+            "role": {
+              "enum": [
+                "supplier",
+                "user",
+                "buyer",
+                "payer",
+                "approver",
+                "beneficiary",
+                "partner",
+                "gatekeeper"
+              ],
+              "title": "Role",
+              "type": "string"
+            },
+            "gives": {
+              "default": "unknown",
+              "maxLength": 300,
+              "title": "Gives",
+              "type": "string"
+            },
+            "receives": {
+              "default": "unknown",
+              "maxLength": 300,
+              "title": "Receives",
+              "type": "string"
+            },
+            "depends_on": {
+              "default": "unknown",
+              "maxLength": 300,
+              "title": "Depends On",
+              "type": "string"
+            }
+          },
+          "required": [
+            "actor",
+            "role"
+          ],
+          "title": "ValueChainActor",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "total_accounts": {
+          "maximum": 1000000000,
+          "minimum": 0,
+          "title": "Total Accounts",
+          "type": "integer"
+        },
+        "serviceable_accounts": {
+          "maximum": 1000000000,
+          "minimum": 0,
+          "title": "Serviceable Accounts",
+          "type": "integer"
+        },
+        "reachable_accounts": {
+          "maximum": 1000000000,
+          "minimum": 0,
+          "title": "Reachable Accounts",
+          "type": "integer"
+        },
+        "capacity": {
+          "maximum": 1000000000,
+          "minimum": 0,
+          "title": "Capacity",
+          "type": "integer"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "maximum": 1000000000000.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Price"
+        },
+        "unit": {
+          "maxLength": 100,
+          "minLength": 2,
+          "title": "Unit",
+          "type": "string"
+        },
+        "period": {
+          "default": "year",
+          "enum": [
+            "month",
+            "year",
+            "cohort"
+          ],
+          "title": "Period",
+          "type": "string"
+        },
+        "workspace": {
+          "$ref": "#/$defs/MarketWorkspace",
+          "title": "MVP workspace"
+        }
+      },
+      "required": [
+        "total_accounts",
+        "serviceable_accounts",
+        "reachable_accounts",
+        "capacity",
+        "price",
+        "unit"
+      ],
+      "title": "MarketMapperMVPInputs",
+      "type": "object"
+    },
+    "output_variants": [
+      {
+        "$defs": {
+          "MarketInputs": {
+            "additionalProperties": false,
+            "properties": {
+              "total_accounts": {
+                "maximum": 1000000000,
+                "minimum": 0,
+                "title": "Total Accounts",
+                "type": "integer"
+              },
+              "serviceable_accounts": {
+                "maximum": 1000000000,
+                "minimum": 0,
+                "title": "Serviceable Accounts",
+                "type": "integer"
+              },
+              "reachable_accounts": {
+                "maximum": 1000000000,
+                "minimum": 0,
+                "title": "Reachable Accounts",
+                "type": "integer"
+              },
+              "capacity": {
+                "maximum": 1000000000,
+                "minimum": 0,
+                "title": "Capacity",
+                "type": "integer"
+              },
+              "price": {
+                "anyOf": [
+                  {
+                    "maximum": 1000000000000.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  }
+                ],
+                "title": "Price"
+              },
+              "unit": {
+                "maxLength": 100,
+                "minLength": 2,
+                "title": "Unit",
+                "type": "string"
+              },
+              "period": {
+                "default": "year",
+                "enum": [
+                  "month",
+                  "year",
+                  "cohort"
+                ],
+                "title": "Period",
+                "type": "string"
+              }
+            },
+            "required": [
+              "total_accounts",
+              "serviceable_accounts",
+              "reachable_accounts",
+              "capacity",
+              "price",
+              "unit"
+            ],
+            "title": "MarketInputs",
+            "type": "object"
+          },
+          "ReportSection": {
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "title": "Key",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "description": {
+                "default": "",
+                "title": "Description",
+                "type": "string"
+              },
+              "rows": {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "title": "Rows",
+                "type": "array"
+              }
+            },
+            "required": [
+              "key",
+              "title"
+            ],
+            "title": "ReportSection",
+            "type": "object"
+          },
+          "WorkspaceReport": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "const": "founder-mvp-v1",
+                "default": "founder-mvp-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "sections": {
+                "items": {
+                  "$ref": "#/$defs/ReportSection"
+                },
+                "title": "Sections",
+                "type": "array"
+              },
+              "gaps": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Gaps",
+                "type": "array"
+              },
+              "next_action": {
+                "title": "Next Action",
+                "type": "string"
+              }
+            },
+            "required": [
+              "sections",
+              "next_action"
+            ],
+            "title": "WorkspaceReport",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "model_assistance": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Assistance"
+          },
+          "workspace": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/WorkspaceReport"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "definition": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Definition",
+            "type": "object"
+          },
+          "drivers": {
+            "$ref": "#/$defs/MarketInputs"
+          },
+          "sizing": {
+            "additionalProperties": true,
+            "title": "Sizing",
+            "type": "object"
+          }
+        },
+        "required": [
+          "definition",
+          "drivers",
+          "sizing"
+        ],
+        "title": "MarketDefinition",
+        "type": "object"
+      }
+    ],
+    "receives": [
+      "home",
+      "research",
+      "customer",
+      "passport"
+    ],
+    "sends": [
+      "customer",
+      "competitor",
+      "model",
+      "finance",
+      "investor",
+      "passport"
+    ],
+    "mvp": {
+      "source_pages": "17-20",
+      "release": "founder_mvp",
+      "modules": [
+        "Market definition",
+        "Value chain",
+        "Segments",
+        "Sizing drivers"
+      ],
+      "model_families": [],
+      "patterns": []
+    }
+  },
+  "customer": {
+    "input": {
+      "$defs": {
+        "CodedObservation": {
+          "additionalProperties": false,
+          "properties": {
+            "source_id": {
+              "anyOf": [
+                {
+                  "maxLength": 80,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Source Id"
+            },
+            "quote": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Quote",
+              "type": "string"
+            },
+            "theme": {
+              "maxLength": 300,
+              "title": "Theme",
+              "type": "string"
+            },
+            "role": {
+              "default": "unknown",
+              "enum": [
+                "user",
+                "buyer",
+                "payer",
+                "approver",
+                "blocker",
+                "beneficiary",
+                "unknown"
+              ],
+              "title": "Role",
+              "type": "string"
+            },
+            "kind": {
+              "default": "past_behavior",
+              "enum": [
+                "past_behavior",
+                "workaround",
+                "cost",
+                "objection",
+                "opinion",
+                "hypothetical_intent"
+              ],
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          "required": [
+            "theme"
+          ],
+          "title": "CodedObservation",
+          "type": "object"
+        },
+        "CustomerWorkspace": {
+          "additionalProperties": false,
+          "properties": {
+            "mode": {
+              "default": "synthesis",
+              "enum": [
+                "synthesis",
+                "plan"
+              ],
+              "title": "Mode",
+              "type": "string"
+            },
+            "decision": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Decision",
+              "type": "string"
+            },
+            "target_segment": {
+              "default": "",
+              "maxLength": 300,
+              "title": "Target Segment",
+              "type": "string"
+            },
+            "recruitment_criteria": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Recruitment Criteria",
+              "type": "string"
+            },
+            "recruitment_bias": {
+              "default": "unknown",
+              "maxLength": 2000,
+              "title": "Recruitment Bias",
+              "type": "string"
+            },
+            "guide": {
+              "items": {
+                "$ref": "#/$defs/InterviewQuestion"
+              },
+              "maxItems": 20,
+              "title": "Guide",
+              "type": "array"
+            },
+            "observations": {
+              "items": {
+                "$ref": "#/$defs/CodedObservation"
+              },
+              "maxItems": 50,
+              "title": "Observations",
+              "type": "array"
+            },
+            "decision_choice": {
+              "default": "pending",
+              "enum": [
+                "pending",
+                "continue",
+                "revise",
+                "pivot",
+                "stop",
+                "another_round"
+              ],
+              "title": "Decision Choice",
+              "type": "string"
+            },
+            "decision_reason": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Decision Reason",
+              "type": "string"
+            },
+            "next_test": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Next Test",
+              "type": "string"
+            }
+          },
+          "title": "CustomerWorkspace",
+          "type": "object"
+        },
+        "InterviewQuestion": {
+          "additionalProperties": false,
+          "properties": {
+            "question": {
+              "maxLength": 300,
+              "title": "Question",
+              "type": "string"
+            },
+            "purpose": {
+              "maxLength": 300,
+              "title": "Purpose",
+              "type": "string"
+            }
+          },
+          "required": [
+            "question",
+            "purpose"
+          ],
+          "title": "InterviewQuestion",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "invited": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Invited",
+          "type": "integer"
+        },
+        "workspace": {
+          "$ref": "#/$defs/CustomerWorkspace",
+          "title": "MVP workspace"
+        }
+      },
+      "title": "CustomerLensMVPInputs",
+      "type": "object"
+    },
+    "output_variants": [
+      {
+        "$defs": {
+          "ReportSection": {
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "title": "Key",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "description": {
+                "default": "",
+                "title": "Description",
+                "type": "string"
+              },
+              "rows": {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "title": "Rows",
+                "type": "array"
+              }
+            },
+            "required": [
+              "key",
+              "title"
+            ],
+            "title": "ReportSection",
+            "type": "object"
+          },
+          "WorkspaceReport": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "const": "founder-mvp-v1",
+                "default": "founder-mvp-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "sections": {
+                "items": {
+                  "$ref": "#/$defs/ReportSection"
+                },
+                "title": "Sections",
+                "type": "array"
+              },
+              "gaps": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Gaps",
+                "type": "array"
+              },
+              "next_action": {
+                "title": "Next Action",
+                "type": "string"
+              }
+            },
+            "required": [
+              "sections",
+              "next_action"
+            ],
+            "title": "WorkspaceReport",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "model_assistance": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Assistance"
+          },
+          "workspace": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/WorkspaceReport"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "invited": {
+            "title": "Invited",
+            "type": "integer"
+          },
+          "interviewed": {
+            "title": "Interviewed",
+            "type": "integer"
+          },
+          "nonresponse": {
+            "title": "Nonresponse",
+            "type": "integer"
+          },
+          "observation_ledger": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Observation Ledger",
+            "type": "array"
+          },
+          "contrary_receipts": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Contrary Receipts",
+            "type": "array"
+          },
+          "interview_guide": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Interview Guide",
+            "type": "array"
+          },
+          "purchase_evidence": {
+            "const": "unknown",
+            "title": "Purchase Evidence",
+            "type": "string"
+          }
+        },
+        "required": [
+          "invited",
+          "interviewed",
+          "nonresponse",
+          "observation_ledger",
+          "contrary_receipts",
+          "interview_guide",
+          "purchase_evidence"
+        ],
+        "title": "CustomerSynthesis",
+        "type": "object"
+      }
+    ],
+    "receives": [
+      "home",
+      "market",
+      "research",
+      "passport"
+    ],
+    "sends": [
+      "model",
+      "experiment",
+      "academy",
+      "passport",
+      "competitor"
+    ],
+    "mvp": {
+      "source_pages": "21-24",
+      "release": "founder_mvp",
+      "modules": [
+        "Discovery plan",
+        "Interview guide",
+        "Consent and notes",
+        "Themes and decision"
+      ],
+      "model_families": [],
+      "patterns": []
+    }
+  },
+  "competitor": {
+    "input": {
+      "$defs": {
+        "CompetitorProfile": {
+          "additionalProperties": false,
+          "properties": {
+            "source_id": {
+              "anyOf": [
+                {
+                  "maxLength": 80,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Source Id"
+            },
+            "quote": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Quote",
+              "type": "string"
+            },
+            "alternative": {
+              "maxLength": 300,
+              "title": "Alternative",
+              "type": "string"
+            },
+            "workflow": {
+              "default": "unknown",
+              "maxLength": 2000,
+              "title": "Workflow",
+              "type": "string"
+            },
+            "capabilities": {
+              "default": "unknown",
+              "maxLength": 2000,
+              "title": "Capabilities",
+              "type": "string"
+            },
+            "customer_tier": {
+              "default": "unknown",
+              "maxLength": 300,
+              "title": "Customer Tier",
+              "type": "string"
+            },
+            "price_period": {
+              "default": "unknown",
+              "enum": [
+                "month",
+                "year",
+                "one_time",
+                "unknown"
+              ],
+              "title": "Price Period",
+              "type": "string"
+            },
+            "price_unit": {
+              "default": "unknown",
+              "maxLength": 300,
+              "title": "Price Unit",
+              "type": "string"
+            },
+            "included_services": {
+              "default": "unknown",
+              "maxLength": 2000,
+              "title": "Included Services",
+              "type": "string"
+            },
+            "setup_fee_inr": {
+              "anyOf": [
+                {
+                  "maximum": 1000000000000.0,
+                  "minimum": 0.0,
+                  "type": "number"
+                },
+                {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Setup Fee Inr"
+            }
+          },
+          "required": [
+            "alternative"
+          ],
+          "title": "CompetitorProfile",
+          "type": "object"
+        },
+        "CompetitorWorkspace": {
+          "additionalProperties": false,
+          "properties": {
+            "customer_job": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Customer Job",
+              "type": "string"
+            },
+            "profiles": {
+              "items": {
+                "$ref": "#/$defs/CompetitorProfile"
+              },
+              "maxItems": 20,
+              "title": "Profiles",
+              "type": "array"
+            },
+            "status_quo": {
+              "default": "unknown",
+              "maxLength": 2000,
+              "title": "Status Quo",
+              "type": "string"
+            },
+            "non_consumption": {
+              "default": "unknown",
+              "maxLength": 2000,
+              "title": "Non Consumption",
+              "type": "string"
+            },
+            "differentiation": {
+              "items": {
+                "$ref": "#/$defs/Differentiation"
+              },
+              "maxItems": 10,
+              "title": "Differentiation",
+              "type": "array"
+            }
+          },
+          "title": "CompetitorWorkspace",
+          "type": "object"
+        },
+        "Differentiation": {
+          "additionalProperties": false,
+          "properties": {
+            "source_id": {
+              "anyOf": [
+                {
+                  "maxLength": 80,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Source Id"
+            },
+            "quote": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Quote",
+              "type": "string"
+            },
+            "benefit": {
+              "maxLength": 2000,
+              "title": "Benefit",
+              "type": "string"
+            },
+            "segment": {
+              "maxLength": 300,
+              "title": "Segment",
+              "type": "string"
+            },
+            "proof_needed": {
+              "maxLength": 2000,
+              "title": "Proof Needed",
+              "type": "string"
+            },
+            "disconfirming_test": {
+              "maxLength": 2000,
+              "title": "Disconfirming Test",
+              "type": "string"
+            }
+          },
+          "required": [
+            "benefit",
+            "segment",
+            "proof_needed",
+            "disconfirming_test"
+          ],
+          "title": "Differentiation",
+          "type": "object"
+        },
+        "Rival": {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "maxLength": 200,
+              "minLength": 2,
+              "title": "Name",
+              "type": "string"
+            },
+            "kind": {
+              "enum": [
+                "direct",
+                "indirect",
+                "substitute",
+                "status_quo",
+                "non_consumption"
+              ],
+              "title": "Kind",
+              "type": "string"
+            },
+            "source_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Source Id"
+            },
+            "price_inr": {
+              "anyOf": [
+                {
+                  "maximum": 1000000000000.0,
+                  "minimum": 0.0,
+                  "type": "number"
+                },
+                {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Price Inr"
+            },
+            "switching_barrier": {
+              "default": "unknown",
+              "maxLength": 1000,
+              "title": "Switching Barrier",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "kind"
+          ],
+          "title": "Rival",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "alternatives": {
+          "items": {
+            "$ref": "#/$defs/Rival"
+          },
+          "maxItems": 20,
+          "title": "Alternatives",
+          "type": "array"
+        },
+        "workspace": {
+          "$ref": "#/$defs/CompetitorWorkspace",
+          "title": "MVP workspace"
+        }
+      },
+      "title": "RivalRadarMVPInputs",
+      "type": "object"
+    },
+    "output_variants": [
+      {
+        "$defs": {
+          "ReportSection": {
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "title": "Key",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "description": {
+                "default": "",
+                "title": "Description",
+                "type": "string"
+              },
+              "rows": {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "title": "Rows",
+                "type": "array"
+              }
+            },
+            "required": [
+              "key",
+              "title"
+            ],
+            "title": "ReportSection",
+            "type": "object"
+          },
+          "WorkspaceReport": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "const": "founder-mvp-v1",
+                "default": "founder-mvp-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "sections": {
+                "items": {
+                  "$ref": "#/$defs/ReportSection"
+                },
+                "title": "Sections",
+                "type": "array"
+              },
+              "gaps": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Gaps",
+                "type": "array"
+              },
+              "next_action": {
+                "title": "Next Action",
+                "type": "string"
+              }
+            },
+            "required": [
+              "sections",
+              "next_action"
+            ],
+            "title": "WorkspaceReport",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "model_assistance": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Assistance"
+          },
+          "workspace": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/WorkspaceReport"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "alternative_map": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Alternative Map",
+            "type": "array"
+          },
+          "status_quo_included": {
+            "title": "Status Quo Included",
+            "type": "boolean"
+          },
+          "switching_test": {
+            "title": "Switching Test",
+            "type": "string"
+          }
+        },
+        "required": [
+          "alternative_map",
+          "status_quo_included",
+          "switching_test"
+        ],
+        "title": "AlternativeMap",
+        "type": "object"
+      }
+    ],
+    "receives": [
+      "home",
+      "research",
+      "market",
+      "customer",
+      "passport"
+    ],
+    "sends": [
+      "model",
+      "experiment",
+      "simulation",
+      "investor",
+      "passport"
+    ],
+    "mvp": {
+      "source_pages": "25-28",
+      "release": "founder_mvp",
+      "modules": [
+        "Alternative universe",
+        "Source profiles",
+        "Comparable pricing",
+        "Differentiation"
+      ],
+      "model_families": [],
+      "patterns": []
+    }
+  },
+  "model": {
+    "input": {
+      "$defs": {
+        "CanvasEntry": {
+          "additionalProperties": false,
+          "properties": {
+            "source_id": {
+              "anyOf": [
+                {
+                  "maxLength": 80,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Source Id"
+            },
+            "quote": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Quote",
+              "type": "string"
+            },
+            "block": {
+              "enum": [
+                "customer_segments",
+                "value_propositions",
+                "channels",
+                "customer_relationships",
+                "revenue_streams",
+                "key_resources",
+                "key_activities",
+                "key_partners",
+                "cost_structure"
+              ],
+              "title": "Block",
+              "type": "string"
+            },
+            "value": {
+              "maxLength": 2000,
+              "title": "Value",
+              "type": "string"
+            },
+            "owner": {
+              "default": "Founder",
+              "maxLength": 300,
+              "title": "Owner",
+              "type": "string"
+            },
+            "test": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Test",
+              "type": "string"
+            }
+          },
+          "required": [
+            "block",
+            "value"
+          ],
+          "title": "CanvasEntry",
+          "type": "object"
+        },
+        "ModelOption": {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "maxLength": 300,
+              "title": "Name",
+              "type": "string"
+            },
+            "relationship": {
+              "default": "unknown",
+              "enum": [
+                "unknown",
+                "b2b",
+                "b2c",
+                "c2c",
+                "b2b2c",
+                "d2c"
+              ],
+              "title": "Relationship",
+              "type": "string"
+            },
+            "operating": {
+              "default": "unknown",
+              "enum": [
+                "unknown",
+                "marketplace",
+                "api_platform",
+                "franchise",
+                "wholesale",
+                "retail",
+                "manufacturing",
+                "direct_service"
+              ],
+              "title": "Operating",
+              "type": "string"
+            },
+            "delivery": {
+              "default": "unknown",
+              "enum": [
+                "unknown",
+                "saas",
+                "licensing",
+                "data_insights",
+                "ai_service",
+                "physical_product",
+                "managed_service"
+              ],
+              "title": "Delivery",
+              "type": "string"
+            },
+            "pricing": {
+              "default": "unknown",
+              "enum": [
+                "unknown",
+                "subscription",
+                "freemium",
+                "usage_based",
+                "per_user",
+                "commission",
+                "transaction_fee",
+                "lead_generation",
+                "advertising",
+                "outcome_based",
+                "one_time"
+              ],
+              "title": "Pricing",
+              "type": "string"
+            },
+            "payer": {
+              "default": "unknown",
+              "maxLength": 300,
+              "title": "Payer",
+              "type": "string"
+            },
+            "revenue_unit": {
+              "default": "unknown",
+              "maxLength": 300,
+              "title": "Revenue Unit",
+              "type": "string"
+            },
+            "price_inr": {
+              "anyOf": [
+                {
+                  "maximum": 1000000000000.0,
+                  "minimum": 0.0,
+                  "type": "number"
+                },
+                {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Price Inr"
+            },
+            "units_per_period": {
+              "anyOf": [
+                {
+                  "maximum": 1000000000,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Units Per Period"
+            },
+            "period": {
+              "default": "month",
+              "enum": [
+                "month",
+                "year",
+                "cohort"
+              ],
+              "title": "Period",
+              "type": "string"
+            },
+            "payment_delay_days": {
+              "anyOf": [
+                {
+                  "maximum": 365,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Payment Delay Days"
+            },
+            "channel": {
+              "default": "unknown",
+              "maxLength": 300,
+              "title": "Channel",
+              "type": "string"
+            },
+            "benefit": {
+              "default": "unknown",
+              "maxLength": 2000,
+              "title": "Benefit",
+              "type": "string"
+            },
+            "risk": {
+              "default": "unknown",
+              "maxLength": 2000,
+              "title": "Risk",
+              "type": "string"
+            },
+            "first_test": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "First Test",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "ModelOption",
+          "type": "object"
+        },
+        "ModelWorkspace": {
+          "additionalProperties": false,
+          "properties": {
+            "stakeholders": {
+              "items": {
+                "$ref": "#/$defs/ValueChainActor"
+              },
+              "maxItems": 20,
+              "title": "Stakeholders",
+              "type": "array"
+            },
+            "options": {
+              "items": {
+                "$ref": "#/$defs/ModelOption"
+              },
+              "maxItems": 3,
+              "title": "Options",
+              "type": "array"
+            },
+            "canvas": {
+              "items": {
+                "$ref": "#/$defs/CanvasEntry"
+              },
+              "maxItems": 9,
+              "title": "Canvas",
+              "type": "array"
+            },
+            "selected_option": {
+              "default": "",
+              "maxLength": 300,
+              "title": "Selected Option",
+              "type": "string"
+            },
+            "decision_reason": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Decision Reason",
+              "type": "string"
+            },
+            "pricing_behavior": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Pricing Behavior",
+              "type": "string"
+            },
+            "pricing_threshold": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Pricing Threshold",
+              "type": "string"
+            }
+          },
+          "title": "ModelWorkspace",
+          "type": "object"
+        },
+        "ValueChainActor": {
+          "additionalProperties": false,
+          "properties": {
+            "actor": {
+              "maxLength": 300,
+              "title": "Actor",
+              "type": "string"
+            },
+            "role": {
+              "enum": [
+                "supplier",
+                "user",
+                "buyer",
+                "payer",
+                "approver",
+                "beneficiary",
+                "partner",
+                "gatekeeper"
+              ],
+              "title": "Role",
+              "type": "string"
+            },
+            "gives": {
+              "default": "unknown",
+              "maxLength": 300,
+              "title": "Gives",
+              "type": "string"
+            },
+            "receives": {
+              "default": "unknown",
+              "maxLength": 300,
+              "title": "Receives",
+              "type": "string"
+            },
+            "depends_on": {
+              "default": "unknown",
+              "maxLength": 300,
+              "title": "Depends On",
+              "type": "string"
+            }
+          },
+          "required": [
+            "actor",
+            "role"
+          ],
+          "title": "ValueChainActor",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "buyer": {
+          "default": "unknown",
+          "maxLength": 300,
+          "title": "Buyer",
+          "type": "string"
+        },
+        "value_proposition": {
+          "default": "unknown",
+          "maxLength": 2000,
+          "title": "Value Proposition",
+          "type": "string"
+        },
+        "relationship": {
+          "default": "unknown",
+          "deprecated": true,
+          "description": "Legacy input. New models use the four separate layers in workspace.options.",
+          "enum": [
+            "direct",
+            "subscription",
+            "marketplace",
+            "b2b2c",
+            "unknown"
+          ],
+          "title": "Relationship",
+          "type": "string"
+        },
+        "channel": {
+          "default": "unknown",
+          "maxLength": 500,
+          "title": "Channel",
+          "type": "string"
+        },
+        "price_inr": {
+          "anyOf": [
+            {
+              "maximum": 1000000000000.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price Inr"
+        },
+        "workspace": {
+          "$ref": "#/$defs/ModelWorkspace",
+          "title": "MVP workspace"
+        }
+      },
+      "title": "ModelArchitectMVPInputs",
+      "type": "object"
+    },
+    "output_variants": [
+      {
+        "$defs": {
+          "ReportSection": {
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "title": "Key",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "description": {
+                "default": "",
+                "title": "Description",
+                "type": "string"
+              },
+              "rows": {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "title": "Rows",
+                "type": "array"
+              }
+            },
+            "required": [
+              "key",
+              "title"
+            ],
+            "title": "ReportSection",
+            "type": "object"
+          },
+          "WorkspaceReport": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "const": "founder-mvp-v1",
+                "default": "founder-mvp-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "sections": {
+                "items": {
+                  "$ref": "#/$defs/ReportSection"
+                },
+                "title": "Sections",
+                "type": "array"
+              },
+              "gaps": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Gaps",
+                "type": "array"
+              },
+              "next_action": {
+                "title": "Next Action",
+                "type": "string"
+              }
+            },
+            "required": [
+              "sections",
+              "next_action"
+            ],
+            "title": "WorkspaceReport",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "model_assistance": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Assistance"
+          },
+          "workspace": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/WorkspaceReport"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "fields": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                  "type": "string"
+                }
+              ]
+            },
+            "title": "Fields",
+            "type": "object"
+          },
+          "model_options": {
+            "items": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "title": "Model Options",
+            "type": "array"
+          },
+          "pricing_test": {
+            "title": "Pricing Test",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fields",
+          "model_options",
+          "pricing_test"
+        ],
+        "title": "BusinessModel",
+        "type": "object"
+      }
+    ],
+    "receives": [
+      "home",
+      "research",
+      "market",
+      "customer",
+      "competitor",
+      "finance",
+      "passport"
+    ],
+    "sends": [
+      "finance",
+      "experiment",
+      "simulation",
+      "academy",
+      "passport"
+    ],
+    "mvp": {
+      "source_pages": "29-36",
+      "release": "founder_mvp",
+      "modules": [
+        "Stakeholders",
+        "Model families",
+        "Nine-block canvas",
+        "Options and pricing test"
+      ],
+      "model_families": [
+        {
+          "layer": "relationship",
+          "id": "b2b",
+          "name": "Business to business",
+          "definition": "An organization buys; users and approvers can differ.",
+          "metrics": "Sales cycle, annual contract value, retention",
+          "first_test": "Identify the budget owner and test a paid pilot."
+        },
+        {
+          "layer": "relationship",
+          "id": "b2c",
+          "name": "Business to consumer",
+          "definition": "An individual buys for personal use.",
+          "metrics": "Conversion, acquisition cost, repeat purchase",
+          "first_test": "Test an offer at a real price with a narrow audience."
+        },
+        {
+          "layer": "relationship",
+          "id": "c2c",
+          "name": "Consumer to consumer",
+          "definition": "Individuals exchange value with each other.",
+          "metrics": "Match rate, time to match, disputes",
+          "first_test": "Test one category with verified participants."
+        },
+        {
+          "layer": "relationship",
+          "id": "b2b2c",
+          "name": "Business to business to consumer",
+          "definition": "A partner buys, embeds or distributes access for end users.",
+          "metrics": "Partner adoption, activation, renewal",
+          "first_test": "Test partner commitment and end-user activation separately."
+        },
+        {
+          "layer": "relationship",
+          "id": "d2c",
+          "name": "Direct to consumer",
+          "definition": "A producer sells directly to consumers.",
+          "metrics": "Order value, returns, fulfillment margin",
+          "first_test": "Test paid orders including acquisition and delivery costs."
+        },
+        {
+          "layer": "operating",
+          "id": "marketplace",
+          "name": "Marketplace",
+          "definition": "Coordinate supply, demand, trust and transactions.",
+          "metrics": "Liquidity, GMV, take rate, disputes",
+          "first_test": "Manually fulfill one dense segment before expanding."
+        },
+        {
+          "layer": "operating",
+          "id": "api_platform",
+          "name": "API / platform",
+          "definition": "Others build on a repeatable programmable capability.",
+          "metrics": "Active integrations, time to value, reliability",
+          "first_test": "Test a paid design-partner integration."
+        },
+        {
+          "layer": "operating",
+          "id": "franchise",
+          "name": "Franchise",
+          "definition": "Operators license a repeatable brand and operating system.",
+          "metrics": "Unit payback, closures, quality",
+          "first_test": "Prove company-operated unit economics first."
+        },
+        {
+          "layer": "operating",
+          "id": "wholesale",
+          "name": "Wholesale",
+          "definition": "Sell in volume to resellers or institutions.",
+          "metrics": "Order value, receivable days, sell-through",
+          "first_test": "Test small orders and payment terms."
+        },
+        {
+          "layer": "operating",
+          "id": "retail",
+          "name": "Retail",
+          "definition": "Sell through physical or digital storefronts.",
+          "metrics": "Conversion, basket size, inventory turns",
+          "first_test": "Test a narrow catalogue or pop-up."
+        },
+        {
+          "layer": "operating",
+          "id": "manufacturing",
+          "name": "Manufacturing",
+          "definition": "Transform inputs and control production quality and capacity.",
+          "metrics": "Yield, utilization, defects, lead time",
+          "first_test": "Test prototypes and paid pilot orders."
+        },
+        {
+          "layer": "delivery",
+          "id": "saas",
+          "name": "SaaS",
+          "definition": "Deliver ongoing access to a software workflow.",
+          "metrics": "Activation, churn, recurring revenue",
+          "first_test": "Test repeated use and paid renewal."
+        },
+        {
+          "layer": "delivery",
+          "id": "licensing",
+          "name": "Licensing",
+          "definition": "Grant defined rights to use intellectual property.",
+          "metrics": "License value, renewal, support cost",
+          "first_test": "Test a standard scope with one customer."
+        },
+        {
+          "layer": "delivery",
+          "id": "data_insights",
+          "name": "Data / insights",
+          "definition": "Deliver lawful, current, decision-relevant information.",
+          "metrics": "Accuracy, freshness, decision impact",
+          "first_test": "Test a paid insight and its effect on a decision."
+        },
+        {
+          "layer": "delivery",
+          "id": "ai_service",
+          "name": "AI as a Service",
+          "definition": "Deliver a bounded model-assisted capability.",
+          "metrics": "Task success, correction, latency, cost",
+          "first_test": "Compare a real task with a human baseline."
+        },
+        {
+          "layer": "pricing",
+          "id": "subscription",
+          "name": "Subscription",
+          "definition": "Charge repeatedly for continuing value.",
+          "metrics": "Renewal, churn, recurring margin",
+          "first_test": "Test renewal after actual use."
+        },
+        {
+          "layer": "pricing",
+          "id": "freemium",
+          "name": "Freemium",
+          "definition": "Offer a free tier with an explicit paid conversion trigger.",
+          "metrics": "Activation, paid conversion, free-user cost",
+          "first_test": "Test the paywall with activated users."
+        },
+        {
+          "layer": "pricing",
+          "id": "usage_based",
+          "name": "Usage based",
+          "definition": "Charge for measurable consumption.",
+          "metrics": "Revenue and margin per unit, bill predictability",
+          "first_test": "Test metering and customer comprehension."
+        },
+        {
+          "layer": "pricing",
+          "id": "per_user",
+          "name": "Per user",
+          "definition": "Charge for authorized or active seats.",
+          "metrics": "Paid seats, utilization, expansion",
+          "first_test": "Test who needs access and a second paid seat."
+        },
+        {
+          "layer": "pricing",
+          "id": "commission",
+          "name": "Commission / take rate",
+          "definition": "Keep a share of transacted value.",
+          "metrics": "GMV, net revenue, leakage, disputes",
+          "first_test": "Test whether trust and workflow justify the fee."
+        },
+        {
+          "layer": "pricing",
+          "id": "transaction_fee",
+          "name": "Transaction fee",
+          "definition": "Charge for a completed transaction or event.",
+          "metrics": "Frequency, fee, contribution, refunds",
+          "first_test": "Test a real transaction with total cost visible."
+        },
+        {
+          "layer": "pricing",
+          "id": "lead_generation",
+          "name": "Lead generation",
+          "definition": "Charge for an agreed qualified prospect.",
+          "metrics": "Lead acceptance, conversion, rejection",
+          "first_test": "Agree qualification rules and track outcomes."
+        },
+        {
+          "layer": "pricing",
+          "id": "advertising",
+          "name": "Advertising",
+          "definition": "Advertisers pay for access to an audience.",
+          "metrics": "Reach, engagement, revenue, user churn",
+          "first_test": "Test a disclosed sponsor and user response."
+        },
+        {
+          "layer": "pricing",
+          "id": "outcome_based",
+          "name": "Outcome based",
+          "definition": "Charge against a verified result and agreed baseline.",
+          "metrics": "Attribution, realization time, disputes",
+          "first_test": "Test measurement and settlement for one outcome."
+        },
+        {
+          "layer": "combination",
+          "id": "hybrid",
+          "name": "Hybrid",
+          "definition": "Combine explicit streams while keeping each stream's economics visible.",
+          "metrics": "Revenue mix, margin by stream, complexity",
+          "first_test": "Test each stream before testing the bundle."
+        }
+      ],
+      "patterns": []
+    }
+  },
+  "finance": {
+    "input": {
+      "$defs": {
+        "DriverSource": {
+          "additionalProperties": false,
+          "properties": {
+            "source_id": {
+              "anyOf": [
+                {
+                  "maxLength": 80,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Source Id"
+            },
+            "quote": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Quote",
+              "type": "string"
+            },
+            "driver": {
+              "maxLength": 300,
+              "title": "Driver",
+              "type": "string"
+            },
+            "definition": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Definition",
+              "type": "string"
+            },
+            "unit": {
+              "default": "",
+              "maxLength": 300,
+              "title": "Unit",
+              "type": "string"
+            },
+            "owner": {
+              "default": "Founder",
+              "maxLength": 300,
+              "title": "Owner",
+              "type": "string"
+            }
+          },
+          "required": [
+            "driver"
+          ],
+          "title": "DriverSource",
+          "type": "object"
+        },
+        "FinanceWorkspace": {
+          "additionalProperties": false,
+          "properties": {
+            "months": {
+              "default": 12,
+              "maximum": 36,
+              "minimum": 1,
+              "title": "Months",
+              "type": "integer"
+            },
+            "monthly_volume_growth_percent": {
+              "anyOf": [
+                {
+                  "maximum": 100.0,
+                  "minimum": -100.0,
+                  "type": "number"
+                },
+                {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                  "type": "string"
+                }
+              ],
+              "default": "0",
+              "title": "Monthly Volume Growth Percent"
+            },
+            "collection_delay_months": {
+              "default": 0,
+              "maximum": 12,
+              "minimum": 0,
+              "title": "Collection Delay Months",
+              "type": "integer"
+            },
+            "collection_percent": {
+              "anyOf": [
+                {
+                  "maximum": 100.0,
+                  "minimum": 0.0,
+                  "type": "number"
+                },
+                {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Collection Percent"
+            },
+            "low_volume_factor": {
+              "anyOf": [
+                {
+                  "maximum": 1.0,
+                  "minimum": 0.0,
+                  "type": "number"
+                },
+                {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                  "type": "string"
+                }
+              ],
+              "default": "0.8",
+              "title": "Low Volume Factor"
+            },
+            "high_volume_factor": {
+              "anyOf": [
+                {
+                  "maximum": 10.0,
+                  "minimum": 1.0,
+                  "type": "number"
+                },
+                {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                  "type": "string"
+                }
+              ],
+              "default": "1.2",
+              "title": "High Volume Factor"
+            },
+            "assumption_sources": {
+              "items": {
+                "$ref": "#/$defs/DriverSource"
+              },
+              "maxItems": 20,
+              "title": "Assumption Sources",
+              "type": "array"
+            }
+          },
+          "title": "FinanceWorkspace",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "price": {
+          "anyOf": [
+            {
+              "maximum": 1000000000000.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Price"
+        },
+        "volume": {
+          "maximum": 1000000000,
+          "minimum": 0,
+          "title": "Volume",
+          "type": "integer"
+        },
+        "direct_cost": {
+          "anyOf": [
+            {
+              "maximum": 1000000000000.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Direct Cost"
+        },
+        "fixed_cost": {
+          "anyOf": [
+            {
+              "maximum": 1000000000000.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Fixed Cost"
+        },
+        "collected_cash": {
+          "anyOf": [
+            {
+              "maximum": 1000000000000.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Collected Cash"
+        },
+        "cash_balance": {
+          "anyOf": [
+            {
+              "maximum": 1000000000000.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Cash Balance"
+        },
+        "period": {
+          "default": "month",
+          "enum": [
+            "month",
+            "year",
+            "cohort"
+          ],
+          "title": "Period",
+          "type": "string"
+        },
+        "acquisition_spend": {
+          "anyOf": [
+            {
+              "maximum": 1000000000000.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sales and marketing acquisition spend in INR for this period. Classify costs already included in the scenario; this field does not add another cash outflow.",
+          "title": "Acquisition Spend"
+        },
+        "new_customers": {
+          "anyOf": [
+            {
+              "maximum": 1000000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New paying customers acquired in the same period as acquisition spend. Zero leaves CAC undefined.",
+          "title": "New Customers"
+        },
+        "average_revenue_per_customer": {
+          "anyOf": [
+            {
+              "maximum": 1000000000000.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Average revenue per customer in INR per selected month or year; used only for the explicit lifetime-value estimate.",
+          "title": "Average Revenue Per Customer"
+        },
+        "customer_lifetime_periods": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "maximum": 1000000.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Assumed customer lifetime in the same month/year units as the selected period. Missing inputs leave LTV unknown.",
+          "title": "Customer Lifetime Periods"
+        },
+        "workspace": {
+          "$ref": "#/$defs/FinanceWorkspace",
+          "title": "MVP workspace"
+        }
+      },
+      "required": [
+        "price",
+        "volume",
+        "direct_cost",
+        "fixed_cost",
+        "collected_cash",
+        "cash_balance"
+      ],
+      "title": "FinancePilotMVPInputs",
+      "type": "object"
+    },
+    "output_variants": [
+      {
+        "$defs": {
+          "FinanceInputs": {
+            "additionalProperties": false,
+            "properties": {
+              "price": {
+                "anyOf": [
+                  {
+                    "maximum": 1000000000000.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  }
+                ],
+                "title": "Price"
+              },
+              "volume": {
+                "maximum": 1000000000,
+                "minimum": 0,
+                "title": "Volume",
+                "type": "integer"
+              },
+              "direct_cost": {
+                "anyOf": [
+                  {
+                    "maximum": 1000000000000.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  }
+                ],
+                "title": "Direct Cost"
+              },
+              "fixed_cost": {
+                "anyOf": [
+                  {
+                    "maximum": 1000000000000.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  }
+                ],
+                "title": "Fixed Cost"
+              },
+              "collected_cash": {
+                "anyOf": [
+                  {
+                    "maximum": 1000000000000.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  }
+                ],
+                "title": "Collected Cash"
+              },
+              "cash_balance": {
+                "anyOf": [
+                  {
+                    "maximum": 1000000000000.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  }
+                ],
+                "title": "Cash Balance"
+              },
+              "period": {
+                "default": "month",
+                "enum": [
+                  "month",
+                  "year",
+                  "cohort"
+                ],
+                "title": "Period",
+                "type": "string"
+              },
+              "acquisition_spend": {
+                "anyOf": [
+                  {
+                    "maximum": 1000000000000.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Sales and marketing acquisition spend in INR for this period. Classify costs already included in the scenario; this field does not add another cash outflow.",
+                "title": "Acquisition Spend"
+              },
+              "new_customers": {
+                "anyOf": [
+                  {
+                    "maximum": 1000000000,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "New paying customers acquired in the same period as acquisition spend. Zero leaves CAC undefined.",
+                "title": "New Customers"
+              },
+              "average_revenue_per_customer": {
+                "anyOf": [
+                  {
+                    "maximum": 1000000000000.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Average revenue per customer in INR per selected month or year; used only for the explicit lifetime-value estimate.",
+                "title": "Average Revenue Per Customer"
+              },
+              "customer_lifetime_periods": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0.0,
+                    "maximum": 1000000.0,
+                    "type": "number"
+                  },
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Assumed customer lifetime in the same month/year units as the selected period. Missing inputs leave LTV unknown.",
+                "title": "Customer Lifetime Periods"
+              }
+            },
+            "required": [
+              "price",
+              "volume",
+              "direct_cost",
+              "fixed_cost",
+              "collected_cash",
+              "cash_balance"
+            ],
+            "title": "FinanceInputs",
+            "type": "object"
+          },
+          "ReportSection": {
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "title": "Key",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "description": {
+                "default": "",
+                "title": "Description",
+                "type": "string"
+              },
+              "rows": {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "title": "Rows",
+                "type": "array"
+              }
+            },
+            "required": [
+              "key",
+              "title"
+            ],
+            "title": "ReportSection",
+            "type": "object"
+          },
+          "WorkspaceReport": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "const": "founder-mvp-v1",
+                "default": "founder-mvp-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "sections": {
+                "items": {
+                  "$ref": "#/$defs/ReportSection"
+                },
+                "title": "Sections",
+                "type": "array"
+              },
+              "gaps": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Gaps",
+                "type": "array"
+              },
+              "next_action": {
+                "title": "Next Action",
+                "type": "string"
+              }
+            },
+            "required": [
+              "sections",
+              "next_action"
+            ],
+            "title": "WorkspaceReport",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "model_assistance": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Assistance"
+          },
+          "workspace": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/WorkspaceReport"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "drivers": {
+            "$ref": "#/$defs/FinanceInputs"
+          },
+          "financials": {
+            "additionalProperties": true,
+            "title": "Financials",
+            "type": "object"
+          },
+          "actuals_status": {
+            "title": "Actuals Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "drivers",
+          "financials",
+          "actuals_status"
+        ],
+        "title": "FinancialModel",
+        "type": "object"
+      }
+    ],
+    "receives": [
+      "home",
+      "research",
+      "market",
+      "model",
+      "experiment",
+      "passport"
+    ],
+    "sends": [
+      "experiment",
+      "simulation",
+      "investor",
+      "passport"
+    ],
+    "mvp": {
+      "source_pages": "37-40",
+      "release": "founder_mvp",
+      "modules": [
+        "Assumptions",
+        "Monthly cash",
+        "Break-even",
+        "Three scenarios"
+      ],
+      "model_families": [],
+      "patterns": []
+    }
+  },
+  "experiment": {
+    "input": {
+      "$defs": {
+        "ExperimentWorkspace": {
+          "additionalProperties": false,
+          "properties": {
+            "risks": {
+              "items": {
+                "$ref": "#/$defs/Risk"
+              },
+              "maxItems": 20,
+              "title": "Risks",
+              "type": "array"
+            },
+            "pattern": {
+              "default": "concierge",
+              "enum": [
+                "concierge",
+                "wizard_of_oz",
+                "landing_page",
+                "prototype",
+                "smoke_test",
+                "pre_order",
+                "pilot",
+                "no_code",
+                "manual_service",
+                "single_feature"
+              ],
+              "title": "Pattern",
+              "type": "string"
+            },
+            "target_customer": {
+              "default": "",
+              "maxLength": 300,
+              "title": "Target Customer",
+              "type": "string"
+            },
+            "core_promise": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Core Promise",
+              "type": "string"
+            },
+            "included_scope": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Included Scope",
+              "type": "string"
+            },
+            "non_goals": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Non Goals",
+              "type": "string"
+            },
+            "tasks": {
+              "items": {
+                "$ref": "#/$defs/Task"
+              },
+              "maxItems": 20,
+              "title": "Tasks",
+              "type": "array"
+            }
+          },
+          "title": "ExperimentWorkspace",
+          "type": "object"
+        },
+        "Risk": {
+          "additionalProperties": false,
+          "properties": {
+            "assumption": {
+              "maxLength": 2000,
+              "title": "Assumption",
+              "type": "string"
+            },
+            "category": {
+              "enum": [
+                "desirability",
+                "viability",
+                "feasibility",
+                "channel",
+                "ethical"
+              ],
+              "title": "Category",
+              "type": "string"
+            },
+            "impact": {
+              "default": 3,
+              "maximum": 5,
+              "minimum": 1,
+              "title": "Impact",
+              "type": "integer"
+            },
+            "uncertainty": {
+              "default": 3,
+              "maximum": 5,
+              "minimum": 1,
+              "title": "Uncertainty",
+              "type": "integer"
+            },
+            "test": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Test",
+              "type": "string"
+            }
+          },
+          "required": [
+            "assumption",
+            "category"
+          ],
+          "title": "Risk",
+          "type": "object"
+        },
+        "Task": {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "maxLength": 300,
+              "title": "Action",
+              "type": "string"
+            },
+            "completion_evidence": {
+              "maxLength": 300,
+              "title": "Completion Evidence",
+              "type": "string"
+            },
+            "status": {
+              "default": "planned",
+              "enum": [
+                "planned",
+                "completed",
+                "abandoned"
+              ],
+              "title": "Status",
+              "type": "string"
+            },
+            "source_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Source Id"
+            },
+            "resolution": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Resolution",
+              "type": "string"
+            }
+          },
+          "required": [
+            "action",
+            "completion_evidence"
+          ],
+          "title": "Task",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "intervention": {
+          "default": "unknown",
+          "maxLength": 2000,
+          "title": "Intervention",
+          "type": "string"
+        },
+        "metric": {
+          "default": "unknown",
+          "maxLength": 300,
+          "title": "Metric",
+          "type": "string"
+        },
+        "threshold_percent": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Threshold Percent"
+        },
+        "minimum_n": {
+          "anyOf": [
+            {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum N"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Date"
+        },
+        "stop_rule": {
+          "default": "unknown",
+          "maxLength": 1000,
+          "title": "Stop Rule",
+          "type": "string"
+        },
+        "workspace": {
+          "$ref": "#/$defs/ExperimentWorkspace",
+          "title": "MVP workspace"
+        }
+      },
+      "title": "MVPForgeMVPInputs",
+      "type": "object"
+    },
+    "output_variants": [
+      {
+        "$defs": {
+          "ReportSection": {
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "title": "Key",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "description": {
+                "default": "",
+                "title": "Description",
+                "type": "string"
+              },
+              "rows": {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "title": "Rows",
+                "type": "array"
+              }
+            },
+            "required": [
+              "key",
+              "title"
+            ],
+            "title": "ReportSection",
+            "type": "object"
+          },
+          "WorkspaceReport": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "const": "founder-mvp-v1",
+                "default": "founder-mvp-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "sections": {
+                "items": {
+                  "$ref": "#/$defs/ReportSection"
+                },
+                "title": "Sections",
+                "type": "array"
+              },
+              "gaps": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Gaps",
+                "type": "array"
+              },
+              "next_action": {
+                "title": "Next Action",
+                "type": "string"
+              }
+            },
+            "required": [
+              "sections",
+              "next_action"
+            ],
+            "title": "WorkspaceReport",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "model_assistance": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Assistance"
+          },
+          "workspace": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/WorkspaceReport"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "protocol_draft": {
+            "additionalProperties": true,
+            "title": "Protocol Draft",
+            "type": "object"
+          },
+          "hypothesis": {
+            "title": "Hypothesis",
+            "type": "string"
+          },
+          "mvp_boundary": {
+            "title": "Mvp Boundary",
+            "type": "string"
+          },
+          "non_goals": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Non Goals",
+            "type": "array"
+          },
+          "locked": {
+            "const": false,
+            "title": "Locked",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "protocol_draft",
+          "hypothesis",
+          "mvp_boundary",
+          "non_goals",
+          "locked"
+        ],
+        "title": "DraftExperiment",
+        "type": "object"
+      },
+      {
+        "$defs": {
+          "ReportSection": {
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "title": "Key",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "description": {
+                "default": "",
+                "title": "Description",
+                "type": "string"
+              },
+              "rows": {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "title": "Rows",
+                "type": "array"
+              }
+            },
+            "required": [
+              "key",
+              "title"
+            ],
+            "title": "ReportSection",
+            "type": "object"
+          },
+          "WorkspaceReport": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "const": "founder-mvp-v1",
+                "default": "founder-mvp-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "sections": {
+                "items": {
+                  "$ref": "#/$defs/ReportSection"
+                },
+                "title": "Sections",
+                "type": "array"
+              },
+              "gaps": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Gaps",
+                "type": "array"
+              },
+              "next_action": {
+                "title": "Next Action",
+                "type": "string"
+              }
+            },
+            "required": [
+              "sections",
+              "next_action"
+            ],
+            "title": "WorkspaceReport",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "model_assistance": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Assistance"
+          },
+          "workspace": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/WorkspaceReport"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "locked_results": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Locked Results",
+            "type": "array"
+          },
+          "protocol_edit_allowed": {
+            "const": false,
+            "title": "Protocol Edit Allowed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "locked_results",
+          "protocol_edit_allowed"
+        ],
+        "title": "LockedExperimentReview",
+        "type": "object"
+      }
+    ],
+    "receives": [
+      "home",
+      "research",
+      "market",
+      "customer",
+      "competitor",
+      "model",
+      "finance",
+      "simulation",
+      "passport"
+    ],
+    "sends": [
+      "home",
+      "model",
+      "finance",
+      "academy",
+      "passport",
+      "investor"
+    ],
+    "mvp": {
+      "source_pages": "41-44",
+      "release": "founder_mvp",
+      "modules": [
+        "Risk ranking",
+        "MVP patterns",
+        "Scope",
+        "Locked protocol and decision"
+      ],
+      "model_families": [],
+      "patterns": [
+        {
+          "id": "concierge",
+          "description": "Deliver a service manually to learn the customer's workflow.",
+          "can_test": "Value and willingness to engage",
+          "cannot_prove": "Automation or scale"
+        },
+        {
+          "id": "wizard_of_oz",
+          "description": "Use a manual backend behind a clearly scoped trial experience.",
+          "can_test": "Interaction and workflow",
+          "cannot_prove": "Technical feasibility at scale"
+        },
+        {
+          "id": "landing_page",
+          "description": "Present a dated offer with an explicit response event.",
+          "can_test": "Offer response in the reached audience",
+          "cannot_prove": "Payment, retention or delivery"
+        },
+        {
+          "id": "prototype",
+          "description": "Let participants attempt one job using a prototype.",
+          "can_test": "Usability and task comprehension",
+          "cannot_prove": "Demand, reliability or willingness to pay"
+        },
+        {
+          "id": "smoke_test",
+          "description": "Measure a real offer response with availability clearly disclosed.",
+          "can_test": "Initial behavioral interest",
+          "cannot_prove": "Retention or fulfilled value"
+        },
+        {
+          "id": "pre_order",
+          "description": "Offer clear delivery/refund terms before taking a commitment.",
+          "can_test": "A specific purchase commitment",
+          "cannot_prove": "Successful delivery or repeat purchase"
+        },
+        {
+          "id": "pilot",
+          "description": "Operate a bounded paid or unpaid trial with stated criteria.",
+          "can_test": "Value within the pilot's conditions",
+          "cannot_prove": "Repeatable growth beyond the sample"
+        },
+        {
+          "id": "no_code",
+          "description": "Assemble only the workflow needed for measurement.",
+          "can_test": "Workflow use",
+          "cannot_prove": "Production security or scale"
+        },
+        {
+          "id": "manual_service",
+          "description": "Run the job directly with a small participant group.",
+          "can_test": "Service value and operational steps",
+          "cannot_prove": "Software economics"
+        },
+        {
+          "id": "single_feature",
+          "description": "Build one feature tied to one observable outcome.",
+          "can_test": "A narrow behavior",
+          "cannot_prove": "A complete product-market fit claim"
+        }
+      ]
+    }
+  },
+  "simulation": {
+    "input": {
+      "$defs": {
+        "SimulationRound": {
+          "additionalProperties": false,
+          "properties": {
+            "price_factor": {
+              "anyOf": [
+                {
+                  "maximum": 10.0,
+                  "minimum": 0.0,
+                  "type": "number"
+                },
+                {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                  "type": "string"
+                }
+              ],
+              "default": "1",
+              "title": "Price Factor"
+            },
+            "demand_factor": {
+              "anyOf": [
+                {
+                  "maximum": 10.0,
+                  "minimum": 0.0,
+                  "type": "number"
+                },
+                {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                  "type": "string"
+                }
+              ],
+              "default": "1",
+              "title": "Demand Factor"
+            },
+            "channel_spend_inr": {
+              "anyOf": [
+                {
+                  "maximum": 1000000000000.0,
+                  "minimum": 0.0,
+                  "type": "number"
+                },
+                {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                  "type": "string"
+                }
+              ],
+              "default": "0",
+              "title": "Channel Spend Inr"
+            },
+            "channel_customers": {
+              "default": 0,
+              "maximum": 1000000,
+              "minimum": 0,
+              "title": "Channel Customers",
+              "type": "integer"
+            },
+            "event": {
+              "default": "none",
+              "enum": [
+                "none",
+                "demand_down_20",
+                "direct_cost_up_20"
+              ],
+              "title": "Event",
+              "type": "string"
+            },
+            "rationale": {
+              "maxLength": 2000,
+              "title": "Rationale",
+              "type": "string"
+            },
+            "debrief": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Debrief",
+              "type": "string"
+            }
+          },
+          "required": [
+            "rationale"
+          ],
+          "title": "SimulationRound",
+          "type": "object"
+        },
+        "SimulationWorkspace": {
+          "additionalProperties": false,
+          "properties": {
+            "learning_objective": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Learning Objective",
+              "type": "string"
+            },
+            "capacity": {
+              "anyOf": [
+                {
+                  "maximum": 1000000000,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Capacity"
+            },
+            "rounds": {
+              "items": {
+                "$ref": "#/$defs/SimulationRound"
+              },
+              "maxItems": 12,
+              "title": "Rounds",
+              "type": "array"
+            },
+            "replay_label": {
+              "default": "Original",
+              "maxLength": 300,
+              "title": "Replay Label",
+              "type": "string"
+            }
+          },
+          "title": "SimulationWorkspace",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "price_factor": {
+          "anyOf": [
+            {
+              "maximum": 10.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "default": "1",
+          "title": "Price Factor"
+        },
+        "volume_factor": {
+          "anyOf": [
+            {
+              "maximum": 10.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "default": "1",
+          "title": "Volume Factor"
+        },
+        "workspace": {
+          "$ref": "#/$defs/SimulationWorkspace",
+          "title": "MVP workspace"
+        }
+      },
+      "title": "VentureSimMVPInputs",
+      "type": "object"
+    },
+    "output_variants": [
+      {
+        "$defs": {
+          "FinanceInputs": {
+            "additionalProperties": false,
+            "properties": {
+              "price": {
+                "anyOf": [
+                  {
+                    "maximum": 1000000000000.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  }
+                ],
+                "title": "Price"
+              },
+              "volume": {
+                "maximum": 1000000000,
+                "minimum": 0,
+                "title": "Volume",
+                "type": "integer"
+              },
+              "direct_cost": {
+                "anyOf": [
+                  {
+                    "maximum": 1000000000000.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  }
+                ],
+                "title": "Direct Cost"
+              },
+              "fixed_cost": {
+                "anyOf": [
+                  {
+                    "maximum": 1000000000000.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  }
+                ],
+                "title": "Fixed Cost"
+              },
+              "collected_cash": {
+                "anyOf": [
+                  {
+                    "maximum": 1000000000000.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  }
+                ],
+                "title": "Collected Cash"
+              },
+              "cash_balance": {
+                "anyOf": [
+                  {
+                    "maximum": 1000000000000.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  }
+                ],
+                "title": "Cash Balance"
+              },
+              "period": {
+                "default": "month",
+                "enum": [
+                  "month",
+                  "year",
+                  "cohort"
+                ],
+                "title": "Period",
+                "type": "string"
+              },
+              "acquisition_spend": {
+                "anyOf": [
+                  {
+                    "maximum": 1000000000000.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Sales and marketing acquisition spend in INR for this period. Classify costs already included in the scenario; this field does not add another cash outflow.",
+                "title": "Acquisition Spend"
+              },
+              "new_customers": {
+                "anyOf": [
+                  {
+                    "maximum": 1000000000,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "New paying customers acquired in the same period as acquisition spend. Zero leaves CAC undefined.",
+                "title": "New Customers"
+              },
+              "average_revenue_per_customer": {
+                "anyOf": [
+                  {
+                    "maximum": 1000000000000.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Average revenue per customer in INR per selected month or year; used only for the explicit lifetime-value estimate.",
+                "title": "Average Revenue Per Customer"
+              },
+              "customer_lifetime_periods": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0.0,
+                    "maximum": 1000000.0,
+                    "type": "number"
+                  },
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Assumed customer lifetime in the same month/year units as the selected period. Missing inputs leave LTV unknown.",
+                "title": "Customer Lifetime Periods"
+              }
+            },
+            "required": [
+              "price",
+              "volume",
+              "direct_cost",
+              "fixed_cost",
+              "collected_cash",
+              "cash_balance"
+            ],
+            "title": "FinanceInputs",
+            "type": "object"
+          },
+          "ReportSection": {
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "title": "Key",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "description": {
+                "default": "",
+                "title": "Description",
+                "type": "string"
+              },
+              "rows": {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "title": "Rows",
+                "type": "array"
+              }
+            },
+            "required": [
+              "key",
+              "title"
+            ],
+            "title": "ReportSection",
+            "type": "object"
+          },
+          "WorkspaceReport": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "const": "founder-mvp-v1",
+                "default": "founder-mvp-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "sections": {
+                "items": {
+                  "$ref": "#/$defs/ReportSection"
+                },
+                "title": "Sections",
+                "type": "array"
+              },
+              "gaps": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Gaps",
+                "type": "array"
+              },
+              "next_action": {
+                "title": "Next Action",
+                "type": "string"
+              }
+            },
+            "required": [
+              "sections",
+              "next_action"
+            ],
+            "title": "WorkspaceReport",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "model_assistance": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Assistance"
+          },
+          "workspace": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/WorkspaceReport"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "source_finance_id": {
+            "title": "Source Finance Id",
+            "type": "string"
+          },
+          "starting_drivers": {
+            "$ref": "#/$defs/FinanceInputs"
+          },
+          "decisions": {
+            "additionalProperties": true,
+            "title": "Decisions",
+            "type": "object"
+          },
+          "formula_version": {
+            "title": "Formula Version",
+            "type": "string"
+          },
+          "baseline": {
+            "additionalProperties": true,
+            "title": "Baseline",
+            "type": "object"
+          },
+          "round": {
+            "additionalProperties": true,
+            "title": "Round",
+            "type": "object"
+          },
+          "status": {
+            "const": "SIMULATED",
+            "title": "Status",
+            "type": "string"
+          },
+          "reality_gap": {
+            "title": "Reality Gap",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_finance_id",
+          "starting_drivers",
+          "decisions",
+          "formula_version",
+          "baseline",
+          "round",
+          "status",
+          "reality_gap"
+        ],
+        "title": "SimulationResult",
+        "type": "object"
+      },
+      {
+        "$defs": {
+          "ReportSection": {
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "title": "Key",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "description": {
+                "default": "",
+                "title": "Description",
+                "type": "string"
+              },
+              "rows": {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "title": "Rows",
+                "type": "array"
+              }
+            },
+            "required": [
+              "key",
+              "title"
+            ],
+            "title": "ReportSection",
+            "type": "object"
+          },
+          "WorkspaceReport": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "const": "founder-mvp-v1",
+                "default": "founder-mvp-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "sections": {
+                "items": {
+                  "$ref": "#/$defs/ReportSection"
+                },
+                "title": "Sections",
+                "type": "array"
+              },
+              "gaps": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Gaps",
+                "type": "array"
+              },
+              "next_action": {
+                "title": "Next Action",
+                "type": "string"
+              }
+            },
+            "required": [
+              "sections",
+              "next_action"
+            ],
+            "title": "WorkspaceReport",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "model_assistance": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Assistance"
+          },
+          "workspace": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/WorkspaceReport"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "status": {
+            "const": "SIMULATED",
+            "title": "Status",
+            "type": "string"
+          },
+          "rounds": {
+            "items": {},
+            "title": "Rounds",
+            "type": "array"
+          }
+        },
+        "required": [
+          "status",
+          "rounds"
+        ],
+        "title": "MissingSimulation",
+        "type": "object"
+      }
+    ],
+    "receives": [
+      "home",
+      "model",
+      "finance",
+      "competitor",
+      "passport"
+    ],
+    "sends": [
+      "academy",
+      "experiment",
+      "passport"
+    ],
+    "mvp": {
+      "source_pages": "45-48",
+      "release": "founder_mvp",
+      "modules": [
+        "Monthly scenario",
+        "Decisions",
+        "Replay",
+        "Debrief"
+      ],
+      "model_families": [],
+      "patterns": []
+    }
+  },
+  "academy": {
+    "input": {
+      "$defs": {
+        "AcademyWorkspace": {
+          "additionalProperties": false,
+          "properties": {
+            "current_task": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Current Task",
+              "type": "string"
+            },
+            "diagnostic": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Diagnostic",
+              "type": "string"
+            },
+            "rationale": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Rationale",
+              "type": "string"
+            },
+            "self_review": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Self Review",
+              "type": "string"
+            },
+            "next_application": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Next Application",
+              "type": "string"
+            }
+          },
+          "title": "AcademyWorkspace",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "topic": {
+          "default": "experiments",
+          "enum": [
+            "purpose",
+            "problem",
+            "customer",
+            "research",
+            "market",
+            "competition",
+            "model",
+            "pricing",
+            "finance",
+            "experiments",
+            "ecosystem",
+            "funding"
+          ],
+          "title": "Topic",
+          "type": "string"
+        },
+        "independent_answer": {
+          "default": "",
+          "maxLength": 4000,
+          "title": "Independent Answer",
+          "type": "string"
+        },
+        "hints_used": {
+          "default": 0,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Hints Used",
+          "type": "integer"
+        },
+        "return_to": {
+          "default": "home",
+          "enum": [
+            "home",
+            "research",
+            "market",
+            "customer",
+            "competitor",
+            "model",
+            "finance",
+            "experiment",
+            "simulation",
+            "academy",
+            "ecosystem",
+            "investor",
+            "passport"
+          ],
+          "title": "Return To",
+          "type": "string"
+        },
+        "workspace": {
+          "$ref": "#/$defs/AcademyWorkspace",
+          "title": "MVP workspace"
+        }
+      },
+      "title": "SkillCoachMVPInputs",
+      "type": "object"
+    },
+    "output_variants": [
+      {
+        "$defs": {
+          "ReportSection": {
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "title": "Key",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "description": {
+                "default": "",
+                "title": "Description",
+                "type": "string"
+              },
+              "rows": {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "title": "Rows",
+                "type": "array"
+              }
+            },
+            "required": [
+              "key",
+              "title"
+            ],
+            "title": "ReportSection",
+            "type": "object"
+          },
+          "WorkspaceReport": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "const": "founder-mvp-v1",
+                "default": "founder-mvp-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "sections": {
+                "items": {
+                  "$ref": "#/$defs/ReportSection"
+                },
+                "title": "Sections",
+                "type": "array"
+              },
+              "gaps": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Gaps",
+                "type": "array"
+              },
+              "next_action": {
+                "title": "Next Action",
+                "type": "string"
+              }
+            },
+            "required": [
+              "sections",
+              "next_action"
+            ],
+            "title": "WorkspaceReport",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "model_assistance": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Assistance"
+          },
+          "workspace": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/WorkspaceReport"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "topic": {
+            "title": "Topic",
+            "type": "string"
+          },
+          "lesson_title": {
+            "title": "Lesson Title",
+            "type": "string"
+          },
+          "lesson": {
+            "title": "Lesson",
+            "type": "string"
+          },
+          "applied_exercise": {
+            "title": "Applied Exercise",
+            "type": "string"
+          },
+          "answer": {
+            "title": "Answer",
+            "type": "string"
+          },
+          "hints_used": {
+            "title": "Hints Used",
+            "type": "integer"
+          },
+          "assessment": {
+            "title": "Assessment",
+            "type": "string"
+          },
+          "feedback": {
+            "title": "Feedback",
+            "type": "string"
+          },
+          "return_to": {
+            "title": "Return To",
+            "type": "string"
+          },
+          "transfer_status": {
+            "title": "Transfer Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "topic",
+          "lesson_title",
+          "lesson",
+          "applied_exercise",
+          "answer",
+          "hints_used",
+          "assessment",
+          "feedback",
+          "return_to",
+          "transfer_status"
+        ],
+        "title": "LearningMission",
+        "type": "object"
+      }
+    ],
+    "receives": [
+      "home",
+      "customer",
+      "model",
+      "experiment",
+      "simulation",
+      "ecosystem",
+      "investor",
+      "passport",
+      "finance",
+      "academy"
+    ],
+    "sends": [
+      "home",
+      "research",
+      "market",
+      "customer",
+      "competitor",
+      "model",
+      "finance",
+      "experiment",
+      "simulation",
+      "ecosystem",
+      "investor",
+      "passport"
+    ],
+    "mvp": {
+      "source_pages": "49-53",
+      "release": "founder_mvp",
+      "modules": [
+        "Diagnostic",
+        "Lesson",
+        "Exercise and rubric",
+        "Skill evidence"
+      ],
+      "model_families": [],
+      "patterns": []
+    }
+  },
+  "ecosystem": {
+    "input": {
+      "$defs": {
+        "EcosystemWorkspace": {
+          "additionalProperties": false,
+          "properties": {
+            "need": {
+              "default": "",
+              "maxLength": 300,
+              "title": "Need",
+              "type": "string"
+            },
+            "state_or_ut": {
+              "default": "",
+              "maxLength": 300,
+              "title": "State Or Ut",
+              "type": "string"
+            },
+            "national_only": {
+              "default": false,
+              "title": "National Only",
+              "type": "boolean"
+            },
+            "eligibility_rules": {
+              "items": {
+                "$ref": "#/$defs/EligibilityRule"
+              },
+              "maxItems": 40,
+              "title": "Eligibility Rules",
+              "type": "array"
+            },
+            "saved_opportunities": {
+              "items": {
+                "maxLength": 300,
+                "type": "string"
+              },
+              "maxItems": 10,
+              "title": "Saved Opportunities",
+              "type": "array"
+            }
+          },
+          "title": "EcosystemWorkspace",
+          "type": "object"
+        },
+        "EligibilityRule": {
+          "additionalProperties": false,
+          "properties": {
+            "source_id": {
+              "anyOf": [
+                {
+                  "maxLength": 80,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Source Id"
+            },
+            "quote": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Quote",
+              "type": "string"
+            },
+            "opportunity": {
+              "maxLength": 300,
+              "title": "Opportunity",
+              "type": "string"
+            },
+            "requirement": {
+              "maxLength": 2000,
+              "title": "Requirement",
+              "type": "string"
+            },
+            "result": {
+              "default": "unknown",
+              "enum": [
+                "pass",
+                "fail",
+                "unknown"
+              ],
+              "title": "Result",
+              "type": "string"
+            },
+            "evidence": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Evidence",
+              "type": "string"
+            }
+          },
+          "required": [
+            "opportunity",
+            "requirement"
+          ],
+          "title": "EligibilityRule",
+          "type": "object"
+        },
+        "Opportunity": {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "maxLength": 200,
+              "minLength": 2,
+              "title": "Name",
+              "type": "string"
+            },
+            "official_url": {
+              "maxLength": 2000,
+              "title": "Official Url",
+              "type": "string"
+            },
+            "source_id": {
+              "title": "Source Id",
+              "type": "string"
+            },
+            "last_checked": {
+              "format": "date",
+              "title": "Last Checked",
+              "type": "string"
+            },
+            "closes_on": {
+              "format": "date",
+              "title": "Closes On",
+              "type": "string"
+            },
+            "geography": {
+              "maxLength": 200,
+              "title": "Geography",
+              "type": "string"
+            },
+            "eligibility": {
+              "default": "unknown",
+              "enum": [
+                "confirmed",
+                "unknown",
+                "mismatch"
+              ],
+              "title": "Eligibility",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "official_url",
+            "source_id",
+            "last_checked",
+            "closes_on",
+            "geography"
+          ],
+          "title": "Opportunity",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "opportunities": {
+          "items": {
+            "$ref": "#/$defs/Opportunity"
+          },
+          "maxItems": 30,
+          "title": "Opportunities",
+          "type": "array"
+        },
+        "workspace": {
+          "$ref": "#/$defs/EcosystemWorkspace",
+          "title": "MVP workspace"
+        }
+      },
+      "title": "EcosystemNavigatorMVPInputs",
+      "type": "object"
+    },
+    "output_variants": [
+      {
+        "$defs": {
+          "ReportSection": {
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "title": "Key",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "description": {
+                "default": "",
+                "title": "Description",
+                "type": "string"
+              },
+              "rows": {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "title": "Rows",
+                "type": "array"
+              }
+            },
+            "required": [
+              "key",
+              "title"
+            ],
+            "title": "ReportSection",
+            "type": "object"
+          },
+          "WorkspaceReport": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "const": "founder-mvp-v1",
+                "default": "founder-mvp-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "sections": {
+                "items": {
+                  "$ref": "#/$defs/ReportSection"
+                },
+                "title": "Sections",
+                "type": "array"
+              },
+              "gaps": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Gaps",
+                "type": "array"
+              },
+              "next_action": {
+                "title": "Next Action",
+                "type": "string"
+              }
+            },
+            "required": [
+              "sections",
+              "next_action"
+            ],
+            "title": "WorkspaceReport",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "model_assistance": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Assistance"
+          },
+          "workspace": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/WorkspaceReport"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "shortlist": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Shortlist",
+            "type": "array"
+          },
+          "excluded_expired": {
+            "title": "Excluded Expired",
+            "type": "integer"
+          },
+          "ranking": {
+            "title": "Ranking",
+            "type": "string"
+          },
+          "application_checklist": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Application Checklist",
+            "type": "array"
+          }
+        },
+        "required": [
+          "shortlist",
+          "excluded_expired",
+          "ranking",
+          "application_checklist"
+        ],
+        "title": "OpportunityShortlist",
+        "type": "object"
+      }
+    ],
+    "receives": [
+      "home",
+      "research",
+      "passport"
+    ],
+    "sends": [
+      "home",
+      "academy",
+      "investor",
+      "passport"
+    ],
+    "mvp": {
+      "source_pages": "54-57",
+      "release": "founder_mvp",
+      "modules": [
+        "Supplied registry",
+        "Geography",
+        "Eligibility",
+        "Saved opportunities"
+      ],
+      "model_families": [],
+      "patterns": []
+    }
+  },
+  "investor": {
+    "input": {
+      "$defs": {
+        "InvestorWorkspace": {
+          "additionalProperties": false,
+          "properties": {
+            "why_now": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Why Now",
+              "type": "string"
+            },
+            "alternative_plan": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Alternative Plan",
+              "type": "string"
+            },
+            "use_of_funds": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Use Of Funds",
+              "type": "string"
+            },
+            "pitch_claims": {
+              "items": {
+                "$ref": "#/$defs/PitchClaim"
+              },
+              "maxItems": 20,
+              "title": "Pitch Claims",
+              "type": "array"
+            },
+            "rehearsal": {
+              "items": {
+                "$ref": "#/$defs/Rehearsal"
+              },
+              "maxItems": 10,
+              "title": "Rehearsal",
+              "type": "array"
+            }
+          },
+          "title": "InvestorWorkspace",
+          "type": "object"
+        },
+        "PitchClaim": {
+          "additionalProperties": false,
+          "properties": {
+            "source_id": {
+              "anyOf": [
+                {
+                  "maxLength": 80,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Source Id"
+            },
+            "quote": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Quote",
+              "type": "string"
+            },
+            "section": {
+              "enum": [
+                "problem",
+                "customer",
+                "solution",
+                "market",
+                "model",
+                "traction",
+                "finance",
+                "team",
+                "ask",
+                "risks"
+              ],
+              "title": "Section",
+              "type": "string"
+            },
+            "statement": {
+              "maxLength": 2000,
+              "title": "Statement",
+              "type": "string"
+            },
+            "classification": {
+              "default": "assumption",
+              "enum": [
+                "source_reported",
+                "assumption",
+                "projection"
+              ],
+              "title": "Classification",
+              "type": "string"
+            },
+            "artifact_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Artifact Id"
+            }
+          },
+          "required": [
+            "section",
+            "statement"
+          ],
+          "title": "PitchClaim",
+          "type": "object"
+        },
+        "Rehearsal": {
+          "additionalProperties": false,
+          "properties": {
+            "question": {
+              "maxLength": 300,
+              "title": "Question",
+              "type": "string"
+            },
+            "answer": {
+              "maxLength": 2000,
+              "title": "Answer",
+              "type": "string"
+            },
+            "rationale": {
+              "default": "",
+              "maxLength": 2000,
+              "title": "Rationale",
+              "type": "string"
+            }
+          },
+          "required": [
+            "question",
+            "answer"
+          ],
+          "title": "Rehearsal",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "milestone": {
+          "default": "unknown",
+          "maxLength": 1000,
+          "title": "Milestone",
+          "type": "string"
+        },
+        "amount_inr": {
+          "anyOf": [
+            {
+              "maximum": 1000000000000.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Amount Inr"
+        },
+        "ownership_reviewed": {
+          "default": false,
+          "title": "Ownership Reviewed",
+          "type": "boolean"
+        },
+        "ip_reviewed": {
+          "default": false,
+          "title": "Ip Reviewed",
+          "type": "boolean"
+        },
+        "workspace": {
+          "$ref": "#/$defs/InvestorWorkspace",
+          "title": "MVP workspace"
+        }
+      },
+      "title": "InvestorRoomMVPInputs",
+      "type": "object"
+    },
+    "output_variants": [
+      {
+        "$defs": {
+          "ReportSection": {
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "title": "Key",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "description": {
+                "default": "",
+                "title": "Description",
+                "type": "string"
+              },
+              "rows": {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "title": "Rows",
+                "type": "array"
+              }
+            },
+            "required": [
+              "key",
+              "title"
+            ],
+            "title": "ReportSection",
+            "type": "object"
+          },
+          "WorkspaceReport": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "const": "founder-mvp-v1",
+                "default": "founder-mvp-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "sections": {
+                "items": {
+                  "$ref": "#/$defs/ReportSection"
+                },
+                "title": "Sections",
+                "type": "array"
+              },
+              "gaps": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Gaps",
+                "type": "array"
+              },
+              "next_action": {
+                "title": "Next Action",
+                "type": "string"
+              }
+            },
+            "required": [
+              "sections",
+              "next_action"
+            ],
+            "title": "WorkspaceReport",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "model_assistance": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Assistance"
+          },
+          "workspace": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/WorkspaceReport"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "funding_milestone": {
+            "title": "Funding Milestone",
+            "type": "string"
+          },
+          "amount_inr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount Inr"
+          },
+          "readiness_gaps": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Readiness Gaps",
+            "type": "array"
+          },
+          "reviewed_figures": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Reviewed Figures",
+            "type": "array"
+          },
+          "negative_experiments": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Negative Experiments",
+            "type": "array"
+          },
+          "capital_alternatives": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Capital Alternatives",
+            "type": "array"
+          },
+          "outreach_enabled": {
+            "const": false,
+            "title": "Outreach Enabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "funding_milestone",
+          "amount_inr",
+          "readiness_gaps",
+          "reviewed_figures",
+          "negative_experiments",
+          "capital_alternatives",
+          "outreach_enabled"
+        ],
+        "title": "FundingReadiness",
+        "type": "object"
+      }
+    ],
+    "receives": [
+      "home",
+      "research",
+      "market",
+      "competitor",
+      "finance",
+      "ecosystem",
+      "passport",
+      "experiment"
+    ],
+    "sends": [
+      "home",
+      "research",
+      "academy",
+      "passport"
+    ],
+    "mvp": {
+      "source_pages": "58-61",
+      "release": "founder_mvp",
+      "modules": [
+        "Funding need",
+        "Readiness",
+        "One-pager",
+        "Q&A and checklist"
+      ],
+      "model_families": [],
+      "patterns": []
+    }
+  },
+  "passport": {
+    "input": {
+      "$defs": {
+        "PassportWorkspace": {
+          "additionalProperties": false,
+          "properties": {
+            "next_action": {
+              "default": "mvp_test",
+              "enum": [
+                "customer_discovery",
+                "mvp_test",
+                "financial_planning",
+                "funding_preparation"
+              ],
+              "title": "Next Action",
+              "type": "string"
+            }
+          },
+          "title": "PassportWorkspace",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "workspace": {
+          "$ref": "#/$defs/PassportWorkspace",
+          "title": "MVP workspace"
+        }
+      },
+      "title": "PassportKeeperMVPInputs",
+      "type": "object"
+    },
+    "output_variants": [
+      {
+        "$defs": {
+          "ReportSection": {
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "title": "Key",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "description": {
+                "default": "",
+                "title": "Description",
+                "type": "string"
+              },
+              "rows": {
+                "items": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": "object"
+                },
+                "title": "Rows",
+                "type": "array"
+              }
+            },
+            "required": [
+              "key",
+              "title"
+            ],
+            "title": "ReportSection",
+            "type": "object"
+          },
+          "WorkspaceReport": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "const": "founder-mvp-v1",
+                "default": "founder-mvp-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "sections": {
+                "items": {
+                  "$ref": "#/$defs/ReportSection"
+                },
+                "title": "Sections",
+                "type": "array"
+              },
+              "gaps": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Gaps",
+                "type": "array"
+              },
+              "next_action": {
+                "title": "Next Action",
+                "type": "string"
+              }
+            },
+            "required": [
+              "sections",
+              "next_action"
+            ],
+            "title": "WorkspaceReport",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "model_assistance": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Assistance"
+          },
+          "workspace": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/WorkspaceReport"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "accepted_artifact_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Accepted Artifact Ids",
+            "type": "array"
+          },
+          "active_evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Active Evidence Ids",
+            "type": "array"
+          },
+          "readiness": {
+            "additionalProperties": true,
+            "title": "Readiness",
+            "type": "object"
+          },
+          "evidence_confidence": {
+            "additionalProperties": true,
+            "title": "Evidence Confidence",
+            "type": "object"
+          },
+          "founder_capability": {
+            "additionalProperties": true,
+            "title": "Founder Capability",
+            "type": "object"
+          },
+          "versions": {
+            "items": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "title": "Versions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "accepted_artifact_ids",
+          "active_evidence_ids",
+          "readiness",
+          "evidence_confidence",
+          "founder_capability",
+          "versions"
+        ],
+        "title": "PassportReview",
+        "type": "object"
+      }
+    ],
+    "receives": [
+      "home",
+      "research",
+      "market",
+      "customer",
+      "competitor",
+      "model",
+      "finance",
+      "experiment",
+      "simulation",
+      "academy",
+      "ecosystem",
+      "investor"
+    ],
+    "sends": [
+      "home",
+      "research",
+      "market",
+      "customer",
+      "competitor",
+      "model",
+      "finance",
+      "experiment",
+      "simulation",
+      "academy",
+      "ecosystem",
+      "investor"
+    ],
+    "mvp": {
+      "source_pages": "62-65",
+      "release": "founder_mvp",
+      "modules": [
+        "Evidence and versions",
+        "Decisions",
+        "Three signals",
+        "Owner export"
+      ],
+      "model_families": [],
+      "patterns": []
+    }
+  }
+}

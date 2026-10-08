@@ -3,11 +3,13 @@ from typing import Literal
 from decimal import Decimal
 from pydantic import BaseModel, ConfigDict, model_validator
 from .registry import FinanceInputs, MarketInputs
+from .workspace_contracts import WorkspaceReport
 
 
 class Output(BaseModel):
     model_config = ConfigDict(extra="forbid")
     model_assistance: dict | None = None
+    workspace: WorkspaceReport | None = None
 
 
 class ConceptMap(Output):
